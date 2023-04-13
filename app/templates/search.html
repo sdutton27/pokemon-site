@@ -12,8 +12,13 @@
     {% endif %}
 
     {% if properties %}
-        <div class="card" style="width: 12rem; height: 17rem;">
-            <h5 class="card-title card-title-top">{{properties['name'].title()}}</h5>
+        {%if main_type in ['electric', 'fire', 'psychic', 'steel', 'water', 'fighting', 'dragon', 'ice', 'grass', 'dark', 'fairy']%}
+            <div class="{{main_type}}-card card" style="width: 12rem; height: 17rem;">
+            <h5 class="card-title card-title-top card-title-{{main_type}}">{{properties['name'].title()}}</h5>
+        {% else %}
+            <div class="basic-card card" style="width: 12rem; height: 17rem;">
+            <h5 class="card-title card-title-top card-title-basic">{{properties['name'].title()}}</h5>
+        {% endif %}
             <img class="card-img-top" src="{{properties['photo']}}" alt="Card image cap">
             <div class="card-body">
                 <!--<h5 class="card-title">{{properties['name'].title()}}</h5>-->

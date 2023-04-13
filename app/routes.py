@@ -23,6 +23,15 @@ def find_poke(pokemon_name):
             #return render_template('search.html', form = SignUpForm())
             return "Try again?"
     data = response.json()
+
+    # to get pokemon type:
+    id = data['id']
+    type_url = f'https://pokeapi.co/api/v2/pokemon-form/{id}/'
+    
+    print(type_url)
+    type_response = requests.get(type_url)
+    type_data = type_response.json()
+
     poke_dict={
         "poke_id": data['id'],
         "name": data['name'].title(),
@@ -31,8 +40,11 @@ def find_poke(pokemon_name):
         "photo":data['sprites']['front_shiny'], # i changed this to be front shiny
         "attack_base_stat": data['stats'][1]['base_stat'],
         "hp_base_stat":data['stats'][0]['base_stat'],
-        "defense_base_stat":data['stats'][2]["base_stat"]
+        "defense_base_stat":data['stats'][2]["base_stat"],
+        #"type":type_data['types'][0]['type']['name'] # just getting
+        "types": [type['type']['name'] for type in type_data['types']]
     }
+    print(f"Type is: {poke_dict['types']}")
     return poke_dict
 
 @app.route('/', methods=["GET"])
@@ -51,7 +63,7 @@ def search_page():
             try:
                 pokemon_name = form.pokemon_name.data
                 poke_dict = find_poke(pokemon_name.lower())
-                pokemon = Pokemon(poke_dict['name'], poke_dict['hp_base_stat'], poke_dict['defense_base_stat'], poke_dict['attack_base_stat'], poke_dict['photo'], poke_dict['abilities'])
+                pokemon = Pokemon(poke_dict['name'], poke_dict['hp_base_stat'], poke_dict['defense_base_stat'], poke_dict['attack_base_stat'], poke_dict['photo'], poke_dict['abilities'], poke_dict['types'])
             except: # if pokemon isnt in api
                 return render_template('search.html', not_in_list=pokemon_name, form = form)
             #ADDED THIS SO THAT USER CAN ONLY INPUT ITEM ONCE INTO THE DB
@@ -66,10 +78,11 @@ def search_page():
                 'defense_base_stat' : poke_dict['defense_base_stat'],
                 'attack_base_stat' : poke_dict['attack_base_stat'],
                 'photo' : poke_dict['photo'],
-                'abilities' : poke_dict['abilities']
+                'abilities' : poke_dict['abilities'],
+                'types' : poke_dict['types']
             } 
             properties = properties
-            return render_template('search.html', form = form, len = len(properties['abilities']),properties=properties)
+            return render_template('search.html', form = form, len = len(properties['abilities']),properties=properties, main_type = properties['types'][0])
     return render_template('search.html', form = form)   
 
 @app.route('/signup', methods=["GET", "POST"])

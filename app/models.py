@@ -11,16 +11,18 @@ class Pokemon(db.Model):
     base_attack = db.Column(db.Integer, nullable=False)
     front_shiny_sprite = db.Column(db.String, nullable=False, unique=True)
     abilities = db.Column(db.String(100), nullable=False) # multiple abilities
+    types = abilities = db.Column(db.String(100), nullable=True) # multiple types, keeping nullable True 
 
     trainer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = True)
 
-    def __init__(self, name, base_hp, base_defense, base_attack, front_shiny_sprite, abilities):
+    def __init__(self, name, base_hp, base_defense, base_attack, front_shiny_sprite, abilities, types):
         self.name = name
         self.base_hp = base_hp
         self.base_defense = base_defense
         self.base_attack = base_attack
         self.front_shiny_sprite = front_shiny_sprite
         self.abilities = abilities
+        self.types = types
 
     def save_to_db(self):
         db.session.add(self)
