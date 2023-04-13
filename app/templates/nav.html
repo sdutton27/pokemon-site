@@ -1,16 +1,49 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="nav-items-shown">
     <a class="navbar-brand" href="/"><img src="./static/img/pokeball.png" width="30" height="30" class="d-inline-block align-top" alt=""><span>PokeFinder</span></a>
+    {% if current_user.is_authenticated %}
+      <div class="user-profile-icons">
+        {% if current_user.profile_pic %}
+        <img class= "profile_img" src={{current_user.profile_pic}} id="profile_icon" width="30px" height="30px">
+        {% endif %}
+      <a class="user-link nav-link active" id="user-greeting" href="#">{{current_user.first_name.title()}}</a>
+    </div>
+    {% else %}
+      <a class="guest-link nav-link active" id="user-greeting" href="#">Guest</a>
+    {% endif%}
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+  </div>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/search">Search</a>
-        </li>
+        {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <p class="nav-link">Hello, {{ current_user.first_name.title() }}</p>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/search">Search</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Log Out</a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link active">Hello, Guest</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Log In</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/signup">Sign Up</a>
+          </li>
+        {% endif %}
       </ul>
     </div>
   </nav>

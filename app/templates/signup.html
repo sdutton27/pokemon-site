@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 id="sign-up-text">Sign Up</h1>
+<div class="form">
+    {% if invalid_email %}
+    <p class="invalid-input">"{{invalid_email}}" is not a valid email</p>
+    {% elif invalid_password %}
+    <p class="invalid-input">Your passwords did not match. Try again.</p>
+    {% elif used_email %}
+    <p class="invalid-input">We already have an account attached to that email. Try a different email, or log in.</p>
+    {% endif %}
+<form method="POST" enctype = multipart/form-data>
+    {{ form.hidden_tag() }}
+
+    {{form.first_name(class='form-control', placeholder='First Name')}}
+    {{form.last_name(class='form-control', placeholder='Last Name')}}
+    {{form.email(class='form-control', placeholder='Email')}}
+    {{form.password(class='form-control', placeholder='Password')}}
+    {{form.confirm_password(class='form-control', placeholder='Confirm Password')}}
+    <h5 id="profile-pic-option">Choose a profile picture (optional)</h5>
+    {{form.profile_pic(class='form-control-file form-control', placeholder='Choose a Profile Pic')}}
+    {{form.submit(class='form-button btn btn-primary')}}
+</form>
+<a class="signup-link nav-link active" href="/login">Click here if you already have an account</a>
+</div>
+{% endblock %}

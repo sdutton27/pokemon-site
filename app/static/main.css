@@ -2,6 +2,77 @@
     margin-right:7px;
 }
 
+.nav-items-shown {
+    display: grid; 
+    grid-auto-columns: 1fr; 
+    grid-auto-rows: 1fr; 
+    grid-template-columns: 75% 15% 10%; 
+    grid-template-rows: 1fr; 
+    gap: auto 10px; 
+    grid-template-areas: 
+    ".navbar-brand .user-profile-icons .navbar-toggler"; 
+    width:100%;
+}
+
+.user-link {
+    color: rgb(169, 172, 83);
+}
+
+.user-link:hover {
+    color: rgb(108, 109, 53);
+}
+
+.guest-link {
+    color: rgb(163, 163, 163);
+}
+
+.guest-link:hover {
+    color: rgb(50, 50, 50);
+}
+
+#user-greeting {
+    justify-self: end;
+    align-self:center;
+    position:relative;
+}
+
+#profile-icon {
+    width: 30px;
+    height:30px;
+    justify-self:center;
+}
+
+.profile_img {
+    align-self:center;
+    border-radius: 50%;
+    padding:2px;
+    border: 1px solid black;
+    background-color: white;
+}
+
+.user-profile-icons{
+    display:flex;
+    flex-direction: rows;
+    min-width: 100px;
+    align-self:center;
+    justify-self:right;
+}
+
+.navbar-toggler {
+    justify-self: end;
+    position:fixed;
+    min-width:50px;
+}
+
+.nav-item p {
+    background-color:rgb(41, 41, 41);
+    margin-bottom:0px;
+}
+
+.navbar-collapse {
+    padding-top: 10px;
+}
+
 h1 {
     text-align:center;
     color:red;
@@ -52,6 +123,11 @@ form {
     display:flex;
 }
 
+#profile-pic-option {
+    margin-top:4px;
+    font-size: 13px;
+}
+
 #submit-btn {
     align-self:center;
     justify-self:center;
@@ -59,6 +135,7 @@ form {
     margin:10px;
     padding:3px;
 }
+
 
 .card-body {
     padding:0;
@@ -77,4 +154,46 @@ form {
 
 .card {
     border: 2px solid rgb(53, 54, 60);
+}
+
+#login-text {
+    color:rgb(43, 155, 170)
+}
+
+#sign-up-text {
+    color:rgb(19, 97, 243);
+    margin-bottom: 18px;
+}
+
+.form {
+    width: 100%;
+    justify-content:center;
+    align-items:center;
+    display:flex;
+    flex-direction:column;
+}
+
+form {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-control {
+    margin: 4px;
+}
+
+.form-button {
+    margin: 4px;
+}
+
+.signup-link {
+    font-size: 13px;
+}
+
+.invalid-input {
+    color:red;
+    font-size: 10px;
+    margin:0px;
 }

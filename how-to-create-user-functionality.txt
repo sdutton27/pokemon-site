@@ -172,3 +172,13 @@ pip3 install -r requirements.txt
 IF YOU GET ERROR:
 sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedTable) relation "user" does not exist
 Make sure you run the commands to get the db working
+
+
+IF DB IS OLD:
+    flask db init
+    flask db migrate
+        returns: Error: Can't locate revision identified by '562c689cd2a5'
+                                                            ^ <revid>
+    flask db revision --rev-id <revid>
+    flask db migrate
+    flask db upgrade    
