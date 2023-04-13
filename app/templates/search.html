@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h4>Type the name of the Pokemon you wish to find.</h4>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        {{form.pokemon_name(class='form-control', id='search-area', placeholder='Pokemon Name')}}
+        {{form.submit(class='btn btn-warning', id='submit-btn')}}
+    </form>
+    {% if properties %}
+        <div class="card" style="width: 12rem;">
+            <img class="card-img-top" src="{{properties['photo']}}" alt="Card image cap">
+            <div class="card-body">
+            <h5 class="card-title">{{properties['name'].title()}}</h5>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item card-text"><b>HP BASE STAT: </b>{{properties['hp_base_stat']}}</li>
+                <li class="list-group-item card-text"><b>HP ATTACK STAT: </b>{{properties['attack_base_stat']}}</li>
+                <li class="list-group-item card-text"><b>HP DEFENSE STAT: </b>{{properties['defense_base_stat']}}</li>
+                <li class="list-group-item card-text"><b>ABILITIES:</b></p>
+            {% for i in range(len) %}
+                <li class="list-group-item card-text">{{properties['abilities'][i]}}</li>
+            {% endfor %}
+            </li>
+            </ul>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

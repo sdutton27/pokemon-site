@@ -1,0 +1,137 @@
+If you put JSON file in static folder, instead of accessing from website:
+
+# in a route in route.py:
+SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+endpoint = url_for('static', filename='test.json')
+my_url = SITE_ROOT + endpoint
+data = json.load(open(my_url))
+print(data)
+
+Today: SELECT statements, get querys
+
+ROUTES.py
+@app.route('/login', methods=["GET", "POST"])
+def loginPage():
+    form = LoginForm()
+    return render_template('login.html', form = form)
+
+# at top 
+from .forms import SignUpForm, LoginForm # at top
+
+FORMS.py
+class LoginForm(FlaskForm):
+    # behind the scenes, this converts this into fields for HTML
+    # specify the type, create instances of those types
+        # Type(the label that will show up, validators)
+                                            # how do we want to Validate the fields of a form
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])               # make sure password is filled in
+    submit = SubmitField('Submit')
+
+Make login.html copy the signup form:
+
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Login</h1>
+  <form method="POST">
+    {{ form.hidden_tag() }}
+
+    {{form.username(class='form-control', placeholder='Username')}}
+    {{form.password(class='form-control', placeholder='Password')}}
+    {{form.submit(class='btn btn-primary')}}
+  </form>
+
+{% endblock %}
+
+GO BACK TO ROUTES.PY AND FILL IN LOGINPAGE() METHOD
+
+INSTALL PREBUILT PACKAGE TO GET US GOING
+
+    pip3 install flask-login
+
+in __init__.py
+from flask_login import LoginManager
+from .models import db, User # on top
+
+login_manager = LoginManager(app) #after Migrate
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
+    
+BACK TO ROUTES.py
+from flask_login import login_user, logout_user, login_required
+# add more info here login_user(user)
+
+TO MODELS.PY
+from flask_login import UserMixin
+class User(db.Model, UserMixin)
+
+IN nav.html
+# show if user is logged in, or show sign-in/up
+{% if current_user.is_authenticated() %}
+            <li class="nav-item">
+              <p class="nav-link">Hello, {{ current_user.username }}</p>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Log Out</a>
+            </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link active">Hello Guest</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Log In</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/signin">Sign In</a>
+          </li>
+          {% endif %}
+
+
+IN ROUTES
+#make a logout route:
+@app.route('/logout')
+def logMeOut():
+    logout_user()
+    return redirect(url_for('loginPage'))
+
+
+    pip3 install -r requirements.txt 
+
+# in routes.py make a posts page
+createposts() and showallposts()
+
+# in forms.py now
+
+# routes. 
+from .form import PostForm
+
+# createpost.html
+
+routes again
+from flask_login import current_user
+@login_required above createPost()
+
+models.py save_to_db()
+
+nav.html make a create post button
+
+front-end validation:
+    make the create post button only if logged in
+back-end valication
+
+__init__ 
+# takes you to the login page if you try to make a post when you aren't logged in 
+login_manager.login_view = 'loginPage'
+
+nav.html make a link that takess you to your feed
+
+route 
+showAllPosts()
+
+posts.html 
+create this()
+
+WE HAVE THAT BACKREF RELATIONSHIP IN MODELS TO P.AUTHOR 
+

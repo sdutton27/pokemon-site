@@ -1,0 +1,80 @@
+.navbar-brand img {
+    margin-right:7px;
+}
+
+h1 {
+    text-align:center;
+    color:red;
+    padding-top:10px;
+}
+
+h6 {
+    text-align:center;
+    padding:30px;
+}
+
+.index {
+    display:flex;
+    flex-direction: column;
+    align-content:center;
+    justify-content:center;
+}
+
+.index button {
+    width:50%;
+    align-self:center;
+}
+
+.container {
+    display:flex;
+    width:100%;
+    flex-direction: column;
+    align-items:center;
+    justify-content:center;
+}
+
+h4 {
+    font-size:20px;
+    text-align:center;
+    padding:10px;
+}
+
+#search-area {
+    align-self:center;
+    justify-self:center;
+}
+
+form {
+    align-items:center;
+    justify-content:center;
+    width:50%;
+    flex-direction: column;
+    display:flex;
+}
+
+#submit-btn {
+    align-self:center;
+    justify-self:center;
+    width:50%;
+    margin:10px;
+    padding:3px;
+}
+
+.card-body {
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+}
+
+.card-text {
+    font-size: 12px;
+    padding:0;
+    margin:0;
+}
+
+.card {
+    border: 2px solid rgb(53, 54, 60);
+}

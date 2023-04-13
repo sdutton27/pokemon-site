@@ -1,0 +1,216 @@
+For Flask projects with forms:
+
+IN TERMINAL:
+    
+    TO CREATE:
+    python3 -m venv my_venv
+    
+    TO ACTIVATE THE ENVIRONMENT:
+    source my_venv/bin/activate
+        
+        TO QUIT:
+        deactivate
+    
+    TO INSTALL FLASK INSIDE YOUR LOCAL ENVIRONMENT:
+    pip install flask python-dotenv
+    (if on mac, use pip3)
+    
+    STORES PACKAGES AND THEIR CORRESPONDING TYPES (don't forget to update this):
+    pip freeze > requirements.txt
+    (if on mac, use pip3)
+
+    TO INSTALL PACKAGES FOR FORMS:
+    pip install flask-wtf
+    (if on mac, use pip3)
+
+    TO INSTALL PACKAGES FOR MODELS:
+    pip install flask-migrate flask-sqlalchemy
+    (if on mac, use pip3)
+    pip install psycopg2 (* FOR WINDOWS)
+    pip3 install psycopg2 (* FOR MAC)
+
+    IF YOU ARE RETRIEVING DATA FROM ANOTHER DATABASE:
+    (ie. the PokeAPI)
+    pip install requests
+
+    *UPDATE REQUIREMENTS.TXT ABOVE*
+
+    THIS WILL BE USED LATER WHEN MAKING TABLES:
+        TO ACTUALLY CREATE TABLES / EXECUTE DDL COMMANDS:
+        flask db init (creates migrations/)
+
+        TO MAKE CHANGES TO DATABASE:
+        flask db migrate (makes changes to our database)
+        flask db upgrade (pushes those changes)
+
+
+Here is the basic file structure
+my_venv/ (created for us, do not touch)
+migrations/ (also eventually created for us, do not touch) - NEW with forms
+.env 
+.gitignore 
+config.py 
+requirements.txt
+run.py
+app/ ->
+        __pycache__/ (created for us, do not touch)
+        routes.py
+        __init__.py
+        forms.py - NEW with forms
+        models.py - NEW with forms/DB
+        static/ ->
+                css/
+                    main.css
+                    [any other CSS files]
+                img/
+                    [any image files]
+        templates/ ->
+                    base.html
+                    index.html 
+                    [any other html files]
+
+-- routes.py, models.py, forms.py and the .html files in the templates/ folder are what change. --
+
+The following files stay (relatively) consistent:
+
+.env file contains:
+    FLASK_APP = run.py
+    FLASK_ENV = development
+    SECRET_KEY = ****<WHATEVER YOU WANT IT TO BE>****
+    DATABASE_URL = postgresql://<name of URL from ElephantSQL, note how we added sql at the beginning>
+
+.gitignore file contains:
+    my_venv/
+    .env
+    migrations/
+
+config.py file contains:
+    import os 
+    basedir = os.path.abspath(os.path.dirname(__name__)) # (gets you base directory for config.py)
+    class Config():
+        FLASK_APP = os.environ.get('FLASK_APP') # what is the entrypoint to the application
+        FLASK_ENV = os.environ.get('FLASK_ENV') # could hardcode this in as 'development'
+        SECRET_KEY = os.environ.get('SECRET_KEY') # make sure we have named this in .env
+        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') # make sure we have gotten the URL in .env
+        SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+run.py file contains:
+    from app import app
+
+    if __name__ == '__main__':
+        app.run()
+
+__init__.py file contains:
+    from flask import Flask
+    from config import Config
+    from .models import db # new with forms
+    from flask_migrate import Migrate # new with forms
+
+    app = Flask(__name__)
+    app.config.from_object(Config)  
+
+    # new section with forms
+    migrate = Migrate(app,db)
+    db.init_app(app) 
+
+    from . import routes
+    from . import models # new with forms
+
+IMPORTS for the files that will change based on what you want:
+
+routes.py IMPORTS:
+    from flask import render_template, request, redirect, url_for
+    from app import app
+    from .forms import <name-of-class-in-forms> # IMPORT ANY FORMS
+    from .models import <name-of-class-in-models.py>, <name-of-another-class-in-models.py>
+
+    # The rest of routes.py looks like:
+
+    # For every html file we want to link to:
+    # route tag: (/url), methods=["<type-of-method-to-be-done-with-this-page>"]
+    @app.route('/<name-of-page>', methods=["GET","POST"])
+    def <name-of-page>():
+        form = SignUpForm()
+        # if the method is POST
+        if request.method == 'POST':
+            # if this is a valid request
+            if form.validate():
+                #get info
+                # <var-form> = form.<var-existing-in-form>.data
+                #for example:
+                username = form.username.data
+                # add user to database
+                # <var1> = <class-in-models>(<var-form>,<any-other-var-forms>)
+                # for example:
+                user = User(username, email, password, otherinforetrievedabove)
+                # <var1>.save_to_db() # helper method
+                user.save_to_db()
+
+                # if we want to redirect back to the home page
+                # return redirect(url_for('homePage'))
+                
+                # if we want to return info to the HTML file 
+                <var-to-give-to-html-file> = <var-taken-from-form>
+                return render_template('<page-name>.html', form = form, <var-to-give-to-html-file>=<var-to-give-to-html-file>)
+
+        # note NO var to give back to HTML page
+        return render_template('<page-name>.html', form = form)    
+
+models.py IMPORTS:
+    from flask_sqlalchemy import SQLAlchemy
+    from datetime import datetime
+
+    # The rest of models.py looks like:
+    db = SQLAlchemy()
+
+    # as many of these as tables:
+    class <Name-Of-Table>(db.Model):
+        # <var-name> = db.<WhatWeAreAdding>(db.<DataType>, <any-constraints-like-unique-default-nullable-PK-FK>)
+        # for example:
+        id = db.Column(db.Integer, primary_key=True)
+        # another example:                            'user.id' is <lowercase-other-table>.<item-from-that-table>
+        user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
+        # we can also add relations to other tables
+        # <var> = db.relationship('<OtherTableName>', backref='<what-we-want-to-call-the-instance-of-this-class-that-relates-to-the-other>', lazy=True)
+        # for example:
+        posts = db.relationship('Post', backref='author', lazy=True)
+
+        def __init__(self, <any var-names from above like columns>):
+            # self.<var-name> = <parameter-var-name>
+            # for example:
+            self.username = username
+
+        def save_to_db(self):
+            db.session.add(self)
+            db.session.commit()
+
+
+forms.py IMPORTS:
+    from flask_wtf import FlaskForm
+    from wtforms import StringField, PasswordField, SubmitField #import whatever datatypes we need
+    from wtforms.validators import DataRequired, EqualTo #import whatever validators that we need
+
+    # The rest of forms.py looks like: 
+    class <NameOfForm>(FlaskForm):
+        # behind the scenes, this converts this into fields for HTML
+        # specify the type, create instances of those types
+        # for example:
+            # <Type>(<the-label-that-will-show-up>, validators)
+        # an example:
+        username = StringField('Username', validators=[DataRequired()])
+
+***NOTE:
+    A FORM IS NOT VALID WITHOUT THE SECRET_KEY:  AT THE TOP OF ANY <form> IN HTML ADD
+    {{ form.hidden_tag() }}
+
+In the HTML class that contains the form:
+    {% extends 'base.html' %} MUST extend this if we want to add the base on
+
+    {% block content %}
+        <form method="POST"> MAKE SURE it is post
+            {{ form.hidden_tag() }} THIS IS NEEDED
+                            'form-control' is just from bootstrap
+            {{form.username(class='form-control', placeholder='Username')}}
+            {{form.submit(class='btn btn-primary')}}
+        </form>
+    {% endblock %}
