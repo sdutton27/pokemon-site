@@ -44,14 +44,19 @@ IN TERMINAL:
         flask db upgrade (pushes those changes)
 
 OPTIONAL:
+    TO GET BACK TO BASE:
+        git branch -M main
     TO ADD NEW BRANCH TO GITHUB:
         git branch <new_branch_name>
         git checkout <new_branch_name>
-    TO PUSH CODE TO NEW BRANCH:
+    TO PUSH CODE TO NEW BRANCH: (MAKE SURE YOU ALSO PUSH CODE TO MAIN)
         git add .
         git fetch
         git rebase origin/main
         git push origin <new_branch_name>
+    (MAKE SURE YOU ALSO PUSH CODE TO MAIN):
+        git branch -M main
+        git push origin main
 
 Here is the basic file structure
 my_venv/ (created for us, do not touch)

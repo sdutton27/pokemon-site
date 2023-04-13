@@ -20,6 +20,7 @@ def find_poke(pokemon_name):
     url = f'https://pokeapi.co/api/v2/pokemon/{pokemon_name}/'
     response = requests.get(url)
     if not response.ok:
+            #return render_template('search.html', form = SignUpForm())
             return "Try again?"
     data = response.json()
     poke_dict={
@@ -47,10 +48,12 @@ def search_page():
     form = PokemonForm()
     if request.method == 'POST':
         if form.validate():
-            pokemon_name = form.pokemon_name.data
-            poke_dict = find_poke(pokemon_name.lower())
-            pokemon = Pokemon(poke_dict['name'], poke_dict['hp_base_stat'], poke_dict['defense_base_stat'], poke_dict['attack_base_stat'], poke_dict['photo'], poke_dict['abilities'])
-            
+            try:
+                pokemon_name = form.pokemon_name.data
+                poke_dict = find_poke(pokemon_name.lower())
+                pokemon = Pokemon(poke_dict['name'], poke_dict['hp_base_stat'], poke_dict['defense_base_stat'], poke_dict['attack_base_stat'], poke_dict['photo'], poke_dict['abilities'])
+            except: # if pokemon isnt in api
+                return render_template('search.html', not_in_list=pokemon_name, form = form)
             #ADDED THIS SO THAT USER CAN ONLY INPUT ITEM ONCE INTO THE DB
             pokemon_already_in_db = Pokemon.query.filter_by(name=pokemon_name.title()).first()
             if not pokemon_already_in_db:
@@ -67,7 +70,6 @@ def search_page():
             } 
             properties = properties
             return render_template('search.html', form = form, len = len(properties['abilities']),properties=properties)
-        
     return render_template('search.html', form = form)   
 
 @app.route('/signup', methods=["GET", "POST"])

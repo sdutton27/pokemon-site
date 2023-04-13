@@ -26,6 +26,11 @@ class Pokemon(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    # We might just be able to use save_to_db()
+    #def update_user(self, user_id):
+        #db.session.add(self)
+        #db.session.commit()
+
 # this name is actually lowercase
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)

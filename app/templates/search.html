@@ -7,21 +7,33 @@
         {{form.pokemon_name(class='form-control', id='search-area', placeholder='Pokemon Name')}}
         {{form.submit(class='btn btn-warning', id='submit-btn')}}
     </form>
+    {% if not_in_list %}
+    <p class="invalid-input">We could not find a Pokemon with the name "{{not_in_list}}". Please try again.</p>
+    {% endif %}
+
     {% if properties %}
-        <div class="card" style="width: 12rem;">
+        <div class="card" style="width: 12rem; height: 17rem;">
+            <h5 class="card-title card-title-top">{{properties['name'].title()}}</h5>
             <img class="card-img-top" src="{{properties['photo']}}" alt="Card image cap">
             <div class="card-body">
-            <h5 class="card-title">{{properties['name'].title()}}</h5>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item card-text"><b>HP BASE STAT: </b>{{properties['hp_base_stat']}}</li>
-                <li class="list-group-item card-text"><b>HP ATTACK STAT: </b>{{properties['attack_base_stat']}}</li>
-                <li class="list-group-item card-text"><b>HP DEFENSE STAT: </b>{{properties['defense_base_stat']}}</li>
-                <li class="list-group-item card-text"><b>ABILITIES:</b></p>
-            {% for i in range(len) %}
-                <li class="list-group-item card-text">{{properties['abilities'][i]}}</li>
-            {% endfor %}
-            </li>
-            </ul>
+                <!--<h5 class="card-title">{{properties['name'].title()}}</h5>-->
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item card-text"><b>HP BASE STAT: </b>{{properties['hp_base_stat']}}</li>
+                    <li class="list-group-item card-text"><b>HP ATTACK STAT: </b>{{properties['attack_base_stat']}}</li>
+                    <li class="list-group-item card-text"><b>HP DEFENSE STAT: </b>{{properties['defense_base_stat']}}</li>
+                    <li class="list-group-item card-text"><b>ABILITIES:
+                    {% for i in range(len) %}
+                    <li class="list-group-item card-text">{{properties['abilities'][i]}}</li>
+                    {% endfor %}
+                    {% if len < 2 %}
+                    <li class="list-group-item card-text extra-line"></li>
+                    <li class="list-group-item card-text extra-line"></li>
+                    {% elif len < 3 %}
+                    <li class="list-group-item card-text extra-line"></li>
+                    {% endif %}
+                    </li>
+                    <!--<input type="button" name="catch-button" class="btn btn-danger" value="Catch">-->
+                </ul>
             </div>
         </div>
     {% endif %}
