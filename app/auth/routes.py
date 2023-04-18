@@ -9,8 +9,10 @@ from flask_login import login_user, logout_user, login_required
 from email_validator import validate_email
 from flask import Blueprint, flash, get_flashed_messages
 
+from sqlalchemy.sql import func # for last_seen
+
 # for images
-from flask_uploads import configure_uploads, IMAGES, UploadSet 
+#from flask_uploads import configure_uploads, IMAGES, UploadSet 
 #maybe for images
 # from flask import current_app
 # from ..models import db
@@ -65,6 +67,7 @@ def signup_page():
                 # except:
                     # create a user without a profile pic
                 user = User(first_name, last_name, email, password)
+                # set last_seen - we don't need to do this because it is defaulted
                 user.save_to_db() 
                 login_user(user)
                 return redirect(url_for('home_page'))
@@ -96,6 +99,11 @@ def login_page():
                     # log in
                 login_user(user) #login the user
                     # take the user back to the homepage
+
+                # set last_seen - we don't need to do this because it is defaulted
+                #user.last_seen = datetime.utcnow # now
+                user.last_seen = func.now()
+                user.save_to_db()     
                 return redirect(url_for('home_page'))
             else:
                     # invalid password

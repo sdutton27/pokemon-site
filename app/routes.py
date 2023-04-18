@@ -12,7 +12,7 @@ from flask import flash, get_flashed_messages
 # let's get this undownloaded from requirements.txt
 #optional = OptionalRoutes(app)
 
-from sqlalchemy import func 
+from sqlalchemy import desc, func 
 
 import requests # to handle the PokeAPI
 
@@ -276,7 +276,7 @@ def catch_pokemon(user_id, pokemon_name):
                     pokemon_caught_by = PokemonCaughtBy(user.user_id, pokemon_name)
                     pokemon_caught_by.save_to_db() 
                     print(f'You have sucessfully caught {pokemon_name}')
-                    flash(f'You have sucessfully caught {pokemon_name}', 'success''')
+                    flash(f'You have successfully caught {pokemon_name}', 'success''')
                     pokemon_caught = session.query(PokemonCaughtBy.pokemon_name).filter_by(user_id=user.user_id)
                     #  This works we are just trying a different way
                     pokemon_caught_list = [r[0] for r in pokemon_caught]
@@ -327,3 +327,85 @@ def remove_pokemon(user_id, pokemon_name):
         print('The user you are trying to delete a pokemon from does not exist')
     # return to the user's page
     return redirect(url_for('user_page', user_id=user.user_id))
+
+@app.route('/users')
+@login_required
+def full_users_page():
+    # testing
+    friend_requests = current_user.followers.all()
+    print(f"These users friend requested me: {friend_requests}")
+    sent_friend_requests = current_user.followed.all()
+    print(f"Sent these users friend requests: {sent_friend_requests}")
+
+
+    users = User.query.order_by(desc('date_created')).all() # gives a list of all users
+    return render_template('full-users.html', users=users)
+
+@app.route('/friend/<int:user_id>')
+@login_required
+def friend_user(user_id):
+    user = User.query.get(user_id)
+    if user:
+        current_user.friend(user)
+
+    friends = current_user.followers.all()
+    print(friends)
+    return redirect(url_for('friend_requests_page'))
+
+@app.route('/unfriend/<int:user_id>')
+@login_required
+def unfriend_user(user_id):
+    user = User.query.get(user_id)
+    if user:
+        current_user.unfriend(user)
+    return redirect(url_for('friend_requests_page'))
+
+@app.route('/deny/<int:user_id>')
+@login_required
+def deny_user(user_id):
+    user = User.query.get(user_id)
+    if user:
+        current_user.deny(user)
+    return redirect(url_for('friend_requests_page'))
+
+@app.route('/friend+requests')
+@login_required
+def friend_requests_page():
+    # We should only have things on this page if it's NOT a mutual friendship
+
+    # Ash sent Brock a friend request
+    # Brock Sent Misty a friend request
+
+    # Brock sent Mike a friend request
+    # if Mike accepts, then this should be removed from the page
+
+    # Right now sending a friend request will always take us to the friends request page
+    # Based on the above methods. Let's find a way to fix that
+
+    friend_requests = current_user.followers.all()
+    print(f"These users friend requested me: {friend_requests}")
+    sent_friend_requests = current_user.followed.all()
+    print(f"Sent these users friend requests: {sent_friend_requests}")
+
+    # if user in current_user.followers.all() and user in current_user.followed.all()
+        # Message should read "unfriend"
+    # elif user in current_user.followers.all() and user not in current_user.followed.all()
+        # Message should read "Accept Friend Request (blue)"
+    # elif user not in current_user.followers.all() and user in current_user.followed.all()
+        # Message should read "remove friend request"
+    # else 
+        # Message should read "Friend" (Blue)
+
+    return render_template('friend-requests.html', friend_requests=friend_requests, sent_friend_requests=sent_friend_requests)
+
+@app.route('/friends')
+@login_required
+def friends_page():
+    friend_requests = current_user.followers.all()
+    print(f"These users friend requested me: {friend_requests}")
+    sent_friend_requests = current_user.followed.all()
+    print(f"Sent these users friend requests: {sent_friend_requests}")
+
+    friends = [fr for fr in friend_requests if fr in sent_friend_requests]
+
+    return render_template('friends.html', friends=friends)

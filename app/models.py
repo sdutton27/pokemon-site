@@ -37,6 +37,13 @@ class Pokemon(db.Model):
         #db.session.add(self)
         #db.session.commit()
 
+# for followers
+followers = db.Table('followers',
+       db.Column('follower_id', db.Integer, db.ForeignKey('user.user_id'), nullable=False),
+       db.Column('followed_id', db.Integer, db.ForeignKey('user.user_id'), nullable=False)              
+)
+
+
 # this name is actually lowercase
 class User(db.Model, UserMixin):
     #id = db.Column(db.Integer, primary_key=True)
@@ -52,8 +59,23 @@ class User(db.Model, UserMixin):
 
     color = db.Column(db.Text, nullable=True)
 
+    last_seen = db.Column(db.DateTime, nullable = False, default=datetime.utcnow)
+
     # will delete a pokemon that belongs to a user if that user is deleted
     pokemon_caught = db.relationship('PokemonCaughtBy', cascade='all,delete',backref='trainer', lazy = True)
+
+    # get the list of people that I follow
+    # we can also do secondary=followers since it's defined above lol        # get back the list of people that I follow
+    followed = db.relationship('User',
+                secondary='followers',
+                lazy='dynamic',
+                backref=db.backref('followers',
+                lazy='dynamic'),        #c. is the column
+                primaryjoin = (followers.c.follower_id == user_id), # this is the ON for a JOIN from SQL
+                secondaryjoin=(followers.c.followed_id == user_id)
+                )
+
+
 
     def __init__(self, first_name, last_name, email, password, profile_pic=''):
         self.first_name = first_name.title()
@@ -77,7 +99,24 @@ class User(db.Model, UserMixin):
         db.session.commit()
 
     def get_id(self):
-        return self.user_id    
+        return self.user_id  
+
+    def friend(self, user):
+        self.followed.append(user)
+        db.session.commit()
+
+    def unfriend(self, user):
+        self.followed.remove(user)
+        # does this work here?
+        user.followed.remove(self)
+        db.session.commit()  
+
+    def deny(self, user):
+        user.followed.remove(self) 
+        db.session.commit()  
+    
+    # def remove_friend_req(self, user):
+    #     self.followers.remove(user)
 
 class PokemonCaughtBy(db.Model):
     __tablename__ = "pokemon_caught_by"

@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-xxl navbar-dark bg-dark">
   <div class="nav-items-shown">
-    <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename='img/pokeball.png') }}" width="30" height="30" class="d-inline-block align-top" alt=""><span>PokeFinder</span></a>
+    <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename='img/pokeball.png') }}" width="30" height="30" class="d-inline-block align-top" alt=""><span>PokeGame</span></a>
     {% if current_user.is_authenticated %}
       <div class="user-profile-icons">
         {% if current_user.profile_pic %}
@@ -8,10 +8,20 @@
         <img class= "profile_img" src="{{current_user.profile_pic}}" id="profile_icon" width="30px" height="30px" style="background-color:{{current_user.color}}">
           {% endif %}
         {% endif %}
+      <!--Handling Friend Requests-->
       <a class="user-link nav-link active" id="user-greeting" href="/user/{{current_user.user_id}}" style="color:{{current_user.color}}">{{current_user.first_name.title()}}</a>
+      {% set requests = [] %}
+		  {% for fr in current_user.followers.all() %}
+        {% if fr not in current_user.followed.all()%}
+				  {{requests.append(fr) or ""}}
+			  {% endif %}
+      {% endfor %}
+      {% if requests|length %}
+		    <a href="/friend+requests">{{requests|length}}</a>
+      {% endif %}
     </div>
     {% else %}
-      <a class="guest-link nav-link active" id="user-greeting" href="#">Guest</a>
+      <a class="guest-link nav-link active" id="user-greeting">Guest</a>
     {% endif%}
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -22,12 +32,21 @@
         {% if current_user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link hello-user-link" href="/user/{{current_user.user_id}}" style="color:{{current_user.color}}">Hello, {{ current_user.first_name.title() }}</a>
-          </li>
+          </li> 
           <li class="nav-item">
             <a class="nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/search">Search</a>
+            <a class="nav-link" href="/friend+requests">Friend Requests</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/friends">My Friends</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/users">Trainers List</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/search">Catch Pokemon</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/logout">Log Out</a>

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class='trainers-container'>
+    <h1>List of Friend Requests</h1>
+    {% if current_user.is_authenticated %} <!--Logged in-->
+        <ul class="list-group trainers-group">
+        {% for f in friend_requests %}
+                {% if (f.user_id != current_user.user_id) and (f not in sent_friend_requests)%}
+                    <a class="list-group-item" href="{{url_for('user_page', user_id=f.user_id)}}">{{f.first_name}} {{f.last_name}}</a>
+                    {% if f in current_user.followed.all() %}
+                        <a class="btn btn-danger" href="{{url_for('unfriend_user', user_id = f.user_id)}}">Unfriend</a>
+                    {% else %}
+                        <!--Everything should be this, if-statement above just double checks though-->
+                        <a class="btn btn-primary" href="{{url_for('friend_user', user_id = f.user_id)}}">Accept Friend Request</a>
+                        <a class="btn btn-danger" href="{{url_for('deny_user', user_id = f.user_id)}}">Deny Friend Request</a>
+                    {% endif %}
+                <p class="card-text"><small class="text-body-secondary">Created {{moment(f.date_created).fromNow()}}</small></p>
+                <p class="card-text"><small class="text-body-secondary">Last seen {{moment(f.last_seen).fromNow()}}</small></p>
+                {% endif %}
+        {% endfor %}
+        </ul>
+    {% else %}
+        <h2>Log in to see your friend requests</h2>
+    {% endif %}
+
+    <!--List of Sent Friend Requests-->
+    <h1>List of Sent Friend Requests</h1>
+    {% if current_user.is_authenticated %} <!--Logged in-->
+        <ul class="list-group trainers-group">
+        {% for f in sent_friend_requests %}
+                {% if (f.user_id != current_user.user_id) and (f not in friend_requests)%}
+                    <a class="list-group-item" href="{{url_for('user_page', user_id=f.user_id)}}">{{f.first_name}} {{f.last_name}}</a>
+                    {% if f in current_user.followed.all() %}
+                        <!--Everything should be this let's just double check though-->
+                        <a class="btn btn-danger" href="{{url_for('unfriend_user', user_id = f.user_id)}}">Remove Friend Request</a>
+                    {% else %}
+                        <a class="btn btn-primary" href="{{url_for('friend_user', user_id = f.user_id)}}">Friend</a>
+                    {% endif %}
+                <p class="card-text"><small class="text-body-secondary">Created {{moment(f.date_created).fromNow()}}</small></p>
+                <p class="card-text"><small class="text-body-secondary">Last seen {{moment(f.last_seen).fromNow()}}</small></p>
+                {% endif %}
+        {% endfor %}
+        </ul>
+    {% else %}
+        <h2>Log in to see your friend requests</h2>
+    {% endif %}
+
+
+</div>
+
+{% endblock %}

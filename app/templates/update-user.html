@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="update-user-container" style="background-color: {{ user.color }}">
-  <h1>Update Your Account</h1>
+<div class="update-user-container" style="background-color: {{ user.color }}ef">
+  <h1 id="update-title">Update Your Account</h1>
   <form method="POST" id="update-user-form" enctype = multipart/form-data>
     {{ form.hidden_tag() }}
 
@@ -51,9 +51,9 @@
       {{form.color(class="form-control form-control-color", placeholder='Color', value=user.color)}}
     </div>
     
-    <div class="option-buttons">
+    <div class="update-option-buttons">
       {{form.submit(class='btn btn-primary')}}
-      <a href="{{ url_for('user_page', user_id=user.user_id) }}" class="button btn btn-warning">Go Back</a>
+      <a href="{{ url_for('user_page', user_id=user.user_id) }}" class="button btn btn-warning go-back-btn">Go Back</a>
     </div>
   </form>
 

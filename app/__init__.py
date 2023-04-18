@@ -4,6 +4,7 @@ from .models import db, User # new with forms
 from flask_migrate import Migrate # new with forms
 from flask_login import LoginManager
 from .auth.routes import auth
+from flask_moment import Moment
 
 
 app = Flask(__name__)
@@ -12,6 +13,8 @@ app.config.from_object(Config)
 # new section with forms
 migrate = Migrate(app,db)
 db.init_app(app) 
+
+moment = Moment(app)
 
 login_manager = LoginManager(app)
 @login_manager.user_loader

@@ -17,6 +17,7 @@ Flask==2.2.3
 flask-form==1.0.0
 Flask-Login==0.6.2
 Flask-Migrate==4.0.4
+Flask-Moment==1.0.5
 flask-optional-routes==1.4.1
 Flask-SQLAlchemy==3.0.3
 Flask-Uploads==0.2.1

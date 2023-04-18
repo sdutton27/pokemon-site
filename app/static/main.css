@@ -1,21 +1,45 @@
 html, body { height: 100%; width:100%; }
 
+body {
+    background-image: url("./img/background-img/pokeballs.png");
+    background-size: 400px;
+    /*background-repeat: no-repeat;*/
+}
+
+.navbar-brand {
+    text-shadow: .2px .2px .2px #000000;
+}
+
 .navbar-brand img {
     margin-right:7px;
+    box-shadow: 0 0 1px 1px #000000;
+    border-radius: 50% 50%;
 }
 
 .navbar {
     /*height:55px;*/
     position: relative;
+    font-family: 'Kanit', sans-serif;
+    text-shadow: .2px .2px .2px #000000;
 }
 
 .alert{
     width:100%;
+    margin-bottom:0;
+}
+
+.flash-button {
+    margin-top:0;
 }
 
 .content-container {
-    /*height:100%;*/
-    height:calc(100% - 55px)
+    height:100%;
+    /*height:calc(100% - 55px);*/
+    width:100%;
+    display:flex;
+    flex-direction: column;
+    /*justify-content: flex-start;
+    align-items:center;*/
 }
 
 .nav-items-shown {
@@ -40,7 +64,7 @@ html, body { height: 100%; width:100%; }
 }
 
 .guest-link {
-    color: rgb(163, 163, 163);
+    color: rgb(255, 255, 255);
 }
 
 .guest-link:hover {
@@ -55,6 +79,7 @@ html, body { height: 100%; width:100%; }
     justify-self: end;
     align-self:center;
     position:relative;
+    color:#ccc;
 }
 
 #profile-icon {
@@ -127,13 +152,36 @@ h6 {
     justify-content:center;
 }
 
+.home-container {
+    background: rgba(255, 255, 255, 0.8);
+    width:90%;
+    font-family: 'Kanit', sans-serif;
+    text-shadow: 1px 1px 1px #ccc;
+    align-self:center;
+    height:100%;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+}
+
 .update-user-container {
     display:flex;
-    width:100%;
     flex-direction: column;
     align-items:center;
     justify-content:center;
     flex-flow: row wrap;
+
+    width:90%;
+    font-family: 'Kanit', sans-serif;
+    text-shadow: 1px 1px 3px 3px #272727;
+    align-self:center;
+}
+
+#update-title {
+    font-size: 32px;
+    color:#1d1d1d;
 }
 
 #update-user-form {
@@ -154,7 +202,6 @@ h6 {
     display:flex;
     flex-direction:row;
     align-items: center;
-    justify-content:center;
 }
 
 #delete-prof-pic {
@@ -166,10 +213,30 @@ h6 {
     width: 70%;
 }
 
+.go-back-btn {
+    width: 90px;
+}
+
+.update-option-buttons {
+    width:400px;
+    display: flex;
+    flex-direction:row;
+    align-items:center;
+    justify-content:center;
+    margin-top: 5px;
+    gap: 20px;
+    margin-bottom: 10px;
+}
+
+/* Type the name of the pokemon you want to catch*/
 h4 {
     font-size:20px;
     text-align:center;
-    padding:10px;
+    padding-top:10px;
+}
+
+.search-container {
+    padding-top: 20px;
 }
 
 #search-area {
@@ -196,6 +263,11 @@ form {
     width:50%;
     margin:10px;
     padding:3px;
+}
+
+/* For delete account button*/
+.modal-title {
+    font-size: 30px;
 }
 
 
@@ -377,6 +449,7 @@ form {
 
 #edit-prof-pic {
     align-self: center;
+    margin-left:20px;
 }
 
 .trainer-card-body {
@@ -640,13 +713,13 @@ form {
     font-size: 20px;
     margin-top:10px;
     margin-bottom:10px;
+    text-shadow: 1px 1px 3px 3px #272727;
 }
 
 .user-container {
     max-width:100%;
     padding:0;
     margin:0;
-    width:100%;
     /*height:100%; /* this isn't working*/
     /*resting height is 55px, active height is 226*/
     height: calc(100% - 55px); /* to account for the navbar */
@@ -666,11 +739,54 @@ form {
         "bottom-user"; 
     /*align-items: start;*/
     /*justify-content:center;*/
+
+    width:90%;
+    font-family: 'Kanit', sans-serif;
+    /*text-shadow: .5px .5px 1px #000000;*/
+    align-self:center;
+
 }
 
 .top-user-container {
     grid-area: top-user;
     height: 100%;
+}
+
+/* for user page */
+.option-buttons {
+    width:400px;
+    display: grid;
+    grid-auto-flow:row;
+    /*grid-auto-flow: row; */
+    grid-auto-rows: auto; 
+    grid-auto-columns: auto;
+    grid-template-columns: auto 1fr auto; 
+    grid-template-rows: 1fr; 
+    gap: 10px; 
+    grid-template-areas: 
+        "friends update delete"; 
+    align-items:center;
+    justify-content:center;
+    margin-top: 5px;
+}
+
+#user-friends-button {
+    grid-area: friends;
+    width: 130px;
+    padding:3px;
+}
+
+#update-profile-btn {
+    grid-area: update;
+    width: 130px;
+    padding:3px;
+    justify-self:center;
+}
+
+#delete-user-btn {
+    grid-area: delete;
+    width: 130px;
+    padding:3px;
 }
 
 .bottom-user-container {
@@ -844,4 +960,17 @@ form {
 
 .space {
     grid-area:space;
+}
+
+/* Full Users Page */
+.trainers-group {
+    width: 70%;
+}
+
+.trainers-container {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
