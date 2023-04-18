@@ -10,10 +10,23 @@
     <title>Pokemon Search</title>
 </head>
 <body>
+    <div class="content-container">
     {% include 'nav.html' %}
+    <!--Handles Flash messages consistently-->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="flash-button btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
     {% block title %}
     {% endblock %}
     {% block content %}
     {% endblock %}
+    </div>
 </body>
 </html>

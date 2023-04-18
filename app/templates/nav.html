@@ -1,12 +1,14 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-xxl navbar-dark bg-dark">
   <div class="nav-items-shown">
-    <a class="navbar-brand" href="/"><img src="./static/img/pokeball.png" width="30" height="30" class="d-inline-block align-top" alt=""><span>PokeFinder</span></a>
+    <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename='img/pokeball.png') }}" width="30" height="30" class="d-inline-block align-top" alt=""><span>PokeFinder</span></a>
     {% if current_user.is_authenticated %}
       <div class="user-profile-icons">
         {% if current_user.profile_pic %}
-        <img class= "profile_img" src={{current_user.profile_pic}} id="profile_icon" width="30px" height="30px">
+          {% if current_user.color %}
+        <img class= "profile_img" src="{{current_user.profile_pic}}" id="profile_icon" width="30px" height="30px" style="background-color:{{current_user.color}}">
+          {% endif %}
         {% endif %}
-      <a class="user-link nav-link active" id="user-greeting" href="#">{{current_user.first_name.title()}}</a>
+      <a class="user-link nav-link active" id="user-greeting" href="/user/{{current_user.user_id}}" style="color:{{current_user.color}}">{{current_user.first_name.title()}}</a>
     </div>
     {% else %}
       <a class="guest-link nav-link active" id="user-greeting" href="#">Guest</a>
@@ -19,7 +21,7 @@
       <ul class="navbar-nav">
         {% if current_user.is_authenticated %}
           <li class="nav-item">
-            <p class="nav-link">Hello, {{ current_user.first_name.title() }}</p>
+            <a class="nav-link hello-user-link" href="/user/{{current_user.user_id}}" style="color:{{current_user.color}}">Hello, {{ current_user.first_name.title() }}</a>
           </li>
           <li class="nav-item">
             <a class="nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
@@ -50,3 +52,4 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+

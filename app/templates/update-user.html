@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="update-user-container" style="background-color: {{ user.color }}">
+  <h1>Update Your Account</h1>
+  <form method="POST" id="update-user-form" enctype = multipart/form-data>
+    {{ form.hidden_tag() }}
+
+    <div class="update-inner-container">
+      <h6 class="update-title">First Name:</h6>
+      {{form.first_name(class='form-control update-form', placeholder='First Name', value=user.first_name)}}
+    </div>
+    <div class="update-inner-container">
+      <h6 class="update-title">Last Name:</h6>
+    {{form.last_name(class='form-control update-form', placeholder='Last Name', value=user.last_name)}}
+    </div>
+    <div class="update-inner-container">
+      <h6 class="update-title">Email:</h6>
+    {{form.email(class='form-control update-form', placeholder='Email', value=user.email)}}
+    </div>
+    <div class="update-inner-container">
+      <h6 class="update-title">Password:</h6>
+      {{form.password(class='form-control update-form', placeholder='Password', value=user.password)}}
+    </div>
+    <div class="update-inner-container">
+      <h6 class="update-title">Confirm Password:</h6>
+      {{form.confirm_password(class='form-control update-form', placeholder='Confirm Password', value=user.confirm_password)}}
+    </div>
+
+    <div class="update-inner-container" style="justify-content:flex-start;">
+    <h6>Current profile picture:</h6>
+    <img class= "profile-pic" id="edit-prof-pic" src="{{user.profile_pic}}" height="100px">
+    </div>
+    <h6>Upload new file: <br><small>(by default, we will keep your existing profile picture)</small></h6>
+    {{form.profile_pic(class='form-control', placeholder='Profile Pic', value=user.profile_pic)}}
+    <div class="update-inner-container" style="justify-content:flex-start;">
+      {{form.delete_profile_pic(class='form-control', id="delete-prof-pic", placeholder='Delete your profile picture?')}}
+      <h6><small><b>Delete your profile picture?</small></b></h6>
+    </div>
+    <div class="update-inner-container update-form">
+      <h6 class="update-title">Bio: <small>(optional)</small></h6>
+      {% if user.bio %}
+        {{form.bio(class='form-control', placeholder='Bio', value=user.bio)}}
+      {% else %}
+        {{form.bio(class='form-control', placeholder='Bio')}}
+      {% endif %}
+    </div>
+    <div class="update-inner-container update-form">
+      <h6 class="color-update">Choose a favorite color (optional):</h6>
+    <!--Color picker-->
+      {{form.color(class="form-control form-control-color", placeholder='Color', value=user.color)}}
+    </div>
+    
+    <div class="option-buttons">
+      {{form.submit(class='btn btn-primary')}}
+      <a href="{{ url_for('user_page', user_id=user.user_id) }}" class="button btn btn-warning">Go Back</a>
+    </div>
+  </form>
+
+</div>
+{% endblock %}

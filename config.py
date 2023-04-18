@@ -6,4 +6,4 @@ class Config():
     SECRET_KEY = os.environ.get('SECRET_KEY') # make sure we have named this in .env
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') # make sure we have gotten the URL in .env
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    UPLOADED_IMAGES_DEST = 'app/static/'
+    UPLOADED_IMAGES_DEST = 'app/static/img/user_img'

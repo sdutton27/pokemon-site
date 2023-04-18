@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container">
-    <h4>Type the name of the Pokemon you wish to find.</h4>
+    <h4>Type the name or (ID number) of the Pokemon you wish to find.</h4>
     <form method="POST">
         {{ form.hidden_tag() }}
         {{form.pokemon_name(class='form-control', id='search-area', placeholder='Pokemon Name')}}
@@ -12,7 +12,7 @@
     {% endif %}
 
     {% if properties %}
-        {%if main_type in ['electric', 'fire', 'psychic', 'steel', 'water', 'fighting', 'dragon', 'ice', 'grass', 'dark', 'fairy']%}
+        {%if main_type in ['electric', 'fire', 'psychic', 'steel', 'water', 'fighting', 'dragon', 'ice', 'grass', 'dark', 'fairy', 'rock']%}
             <div class="{{main_type}}-card card" style="width: 12rem; height: 17rem;">
             <h5 class="card-title card-title-top card-title-{{main_type}}">{{properties['name'].title()}}</h5>
         {% else %}
@@ -40,7 +40,13 @@
                     <!--<input type="button" name="catch-button" class="btn btn-danger" value="Catch">-->
                 </ul>
             </div>
-        </div>
+            </div>
+            <div class="catch-pokemon-container">
+                <a id="catch-button" href="{{ url_for('catch_pokemon', user_id=current_user.user_id, pokemon_name=pokemon.pokemon_name) }}">
+                    <img src="{{ url_for('static', filename='img/catch-pokeball2.png') }}" width="40" height="40" class="d-inline-block align-top catch-pokeball" alt="">
+                </a>
+                <p>Catch This Pokemon!</p>   
+            </div>
     {% endif %}
 </div>
 {% endblock %}
