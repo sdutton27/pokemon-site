@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if user %}
+<div class="container user-container" style="background-color: {{ user.color }}ef">
+    <div class="container top-user-container">
+        <h2 id="user-homepage-title">{{winner.first_name.upper()}} IS THE WINNER!</h2>
+        <!--Let's nicely format the information about a user here-->
+        <div class = "trainer-card-container">
+            {% if winner == user %}
+            <div class="trainer-card" style="width: 12rem; height: 17rem;">
+                {% if user.profile_pic %}
+                <img class= "profile-pic" src="{{user.profile_pic}}" height="100px">
+                {% else %}
+                <img class= "profile-pic" src="{{ url_for('static', filename='img/user_img/user-no-img.png') }}" width="100px" height="100px">
+                {% endif %}
+                <div class="trainer-card-body">
+                        <div class="trainer-card-item" id="user-name"><b>Name: </b>{{user.first_name}} {{user.last_name}}</div>
+                        <div class="h_line"></div>
+                        {% if user.bio %}
+                        <div class="trainer-card-item bio text-overflow: ellipsis;"><b>Bio: </b>{{user.bio}}</div>
+                        {% else %}
+                        <div class="trainer-card-item bio text-overflow: ellipsis;"><b>Bio: </b>{{user.first_name}} has not added a bio.</div>
+                        {% endif %}    
+                </div>
+            </div>
+            {% else %}
+            <div class="trainer-card" style="width: 12rem; height: 17rem;">
+                {% if current_user.profile_pic %}
+                <img class= "profile-pic" src="{{current_user.profile_pic}}" height="100px">
+                {% else %}
+                <img class= "profile-pic" src="{{ url_for('static', filename='img/user_img/user-no-img.png') }}" width="100px" height="100px">
+                {% endif %}
+                <div class="trainer-card-body">
+                        <div class="trainer-card-item" id="user-name"><b>Name: </b>{{current_user.first_name}} {{current_user.last_name}}</div>
+                        <div class="h_line"></div>
+                        {% if user.bio %}
+                        <div class="trainer-card-item bio text-overflow: ellipsis;"><b>Bio: </b>{{current_user.bio}}</div>
+                        {% else %}
+                        <div class="trainer-card-item bio text-overflow: ellipsis;"><b>Bio: </b>{{current_user.first_name}} has not added a bio.</div>
+                        {% endif %}    
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="battle-lower-container">
+        {% if winner == current_user %}
+        <div class="users-pokemon-container">
+            <!--Note how we switch these around-->
+            {% for i in range(my_pokemon_list|length) %}
+            <img class="card-img-top" src="{{my_pokemon_list[i].front_shiny_sprite}}" alt="Card image cap">
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="users-pokemon-container">
+            <!--Note how we switch these around-->
+            {% for i in range(opponent_pokemon_list|length) %}
+            <img class="card-img-top" src="{{opponent_pokemon_list[i].front_shiny_sprite}}" alt="Card image cap">
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="battle-text overflow-auto">
+            {% for i in range(my_moves|length)%}
+            <p>Round {{i+1}}: {{user.first_name}}'s {{opponent_moves[i][0].pokemon_name}} vs. {{current_user.first_name}}'s {{my_moves[i][0].pokemon_name}}</p>
+            {% if my_moves[i][0] == round_winners[i] %} <!--If I won the round-->
+                <p>{{my_moves[i][0].pokemon_name}}'s "{{my_moves[i][1]}}" beat {{opponent_moves[i][0].pokemon_name}}'s "{{opponent_moves[i][1]}}." {{opponent_moves[i][0].pokemon_name}} was eliminated from the battle.</p>
+            {% else %}
+                <p>{{opponent_moves[i][0].pokemon_name}}'s "{{opponent_moves[i][1]}}" beat {{my_moves[i][0].pokemon_name}}'s "{{my_moves[i][1]}}." {{my_moves[i][0].pokemon_name}} was eliminated from the battle.</p>
+            {% endif %}
+            {% endfor %}
+            {% if winner == user %} <!--If the opponent won-->
+                <p>{{current_user.first_name}} ran out of pokemon. Better luck next time.</p>
+                <p>Congratulations {{user.first_name}} on winning the match!</p>
+            {% else %} <!--If the current user won-->
+                <p>{{user.first_name}} ran out of Pokemon. Better luck next time.</p>
+                <p>Congratulations {{current_user.first_name}} on winning the match!</p>
+            {% endif %}
+        </div>
+        <button type="button" onclick="window.location.href='{{url_for('ready_to_battle', user_id= user.user_id)}}'" class="btn btn-success">Rematch?</button>
+    </div>
+</div>
+{% else %}
+<h2>Go battle your friends!</h2>
+{% endif %}
+{% endblock %}

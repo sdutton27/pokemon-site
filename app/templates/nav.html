@@ -4,9 +4,7 @@
     {% if current_user.is_authenticated %}
       <div class="user-profile-icons">
         {% if current_user.profile_pic %}
-          {% if current_user.color %}
-        <img class= "profile_img" src="{{current_user.profile_pic}}" id="profile_icon" width="30px" height="30px" style="background-color:{{current_user.color}}">
-          {% endif %}
+          <img class= "profile_img" src="{{current_user.profile_pic}}" id="profile_icon" width="30px" height="30px" style="background-color:{{current_user.color}}">
         {% endif %}
       <!--Handling Friend Requests-->
       <a class="user-link nav-link active" id="user-greeting" href="/user/{{current_user.user_id}}" style="color:{{current_user.color}}">{{current_user.first_name.title()}}</a>
@@ -17,7 +15,7 @@
 			  {% endif %}
       {% endfor %}
       {% if requests|length %}
-		    <a href="/friend+requests">{{requests|length}}</a>
+		    <a class= "notification" href="/friend+requests">{{requests|length}}</a>
       {% endif %}
     </div>
     {% else %}

@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_login import UserMixin
+from werkzeug.security import generate_password_hash
 
 db = SQLAlchemy()
 
@@ -14,12 +15,16 @@ class Pokemon(db.Model):
     abilities = db.Column(db.ARRAY(db.String(20)), nullable=False) # multiple abilities
     types = db.Column(db.ARRAY(db.String(20)), nullable=True) # multiple types, keeping nullable True 
 
+    back_shiny_sprite = db.Column(db.String, nullable=False, unique=True)
+
+    moves = db.Column(db.ARRAY(db.String(20)), nullable=False)
+
     #trainer_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable = True)
 
     # will delete a pokemon/user relationship if that pokemon is deleted
     trainer = db.relationship('PokemonCaughtBy', cascade='all,delete',backref='pokemon_caught', lazy = True)
 
-    def __init__(self, name, base_hp, base_defense, base_attack, front_shiny_sprite, abilities, types):
+    def __init__(self, name, base_hp, base_defense, base_attack, front_shiny_sprite, abilities, types, back_shiny_sprite, moves):
         self.pokemon_name = name
         self.base_hp = base_hp
         self.base_defense = base_defense
@@ -27,6 +32,8 @@ class Pokemon(db.Model):
         self.front_shiny_sprite = front_shiny_sprite
         self.abilities = abilities
         self.types = types
+        self.back_shiny_sprite = back_shiny_sprite
+        self.moves = moves
 
     def save_to_db(self):
         db.session.add(self)
@@ -57,7 +64,9 @@ class User(db.Model, UserMixin):
     
     bio = db.Column(db.String(100), nullable=True)
 
-    color = db.Column(db.Text, nullable=True)
+    color = db.Column(db.Text, nullable=True, default='#ffffff')
+
+    battle_score = db.Column(db.Integer, nullable=False, default=0)
 
     last_seen = db.Column(db.DateTime, nullable = False, default=datetime.utcnow)
 
@@ -77,15 +86,11 @@ class User(db.Model, UserMixin):
 
 
 
-    def __init__(self, first_name, last_name, email, password, profile_pic=''):
+    def __init__(self, first_name, last_name, email, password):
         self.first_name = first_name.title()
         self.last_name = last_name.title()
         self.email = email
-        self.password = password
-
-        self.profile_pic = profile_pic
-
-        self.color = "#ffffff"
+        self.password = generate_password_hash(password)
 
     def save_to_db(self):
         db.session.add(self)
@@ -115,8 +120,9 @@ class User(db.Model, UserMixin):
         user.followed.remove(self) 
         db.session.commit()  
     
-    # def remove_friend_req(self, user):
-    #     self.followers.remove(user)
+    def remove_friend_req(self, user):
+        self.followed.remove(user)
+        db.session.commit()
 
 class PokemonCaughtBy(db.Model):
     __tablename__ = "pokemon_caught_by"

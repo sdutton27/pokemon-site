@@ -7,6 +7,9 @@ from .models import Pokemon, User, PokemonCaughtBy
 from flask_login import login_required, current_user
 from flask_uploads import configure_uploads, IMAGES, UploadSet
 from flask import flash, get_flashed_messages
+from werkzeug.security import generate_password_hash
+
+import random
 #import ast # to get list from string of list
 #from flask_optional_routes import OptionalRoutes
 # let's get this undownloaded from requirements.txt
@@ -48,7 +51,10 @@ def find_poke(pokemon_name):
         "hp_base_stat":data['stats'][0]['base_stat'],
         "defense_base_stat":data['stats'][2]["base_stat"],
         #"type":type_data['types'][0]['type']['name'] # just getting
-        "types": [type['type']['name'] for type in type_data['types']]
+        "types": [type['type']['name'] for type in type_data['types']],
+        "back_shiny" : data['sprites']['back_shiny'],
+        #"moves" : [data['moves']['move']['name'] for i in range(5)],
+        "moves" : [move['move']['name'] for move in data['moves']], # lc to get all abilities
     }
     print(f"Type is: {poke_dict['types']}")
     return poke_dict
@@ -67,13 +73,24 @@ def home_page():
 def search_page(pokemon_name):
     #print(f"Current prof pic: {current_user.profile_pic}")
 
+    # update the last_seen since user has interacted with the page
+    current_user.last_seen = func.now()
+    current_user.save_to_db()  
+
+
     form = PokemonForm()
     if request.method == 'POST':
         if form.validate():
             try:
                 poke_dict = find_poke(form.pokemon_name.data.lower())
+
                 pokemon_name = poke_dict['name']
-                pokemon = Pokemon(poke_dict['name'], poke_dict['hp_base_stat'], poke_dict['defense_base_stat'], poke_dict['attack_base_stat'], poke_dict['photo'], poke_dict['abilities'], poke_dict['types'])
+                #pokemon = Pokemon(poke_dict['name'], poke_dict['hp_base_stat'], poke_dict['defense_base_stat'], poke_dict['attack_base_stat'], poke_dict['photo'], poke_dict['abilities'], poke_dict['types'])
+
+
+
+
+                pokemon = Pokemon(poke_dict['name'], poke_dict['hp_base_stat'], poke_dict['defense_base_stat'], poke_dict['attack_base_stat'], poke_dict['photo'], poke_dict['abilities'], poke_dict['types'], poke_dict['back_shiny'], poke_dict['moves'])
             except: # if pokemon isnt in api
                 return render_template('search.html', not_in_list=form.pokemon_name.data, form = form)
             #ADDED THIS SO THAT USER CAN ONLY INPUT ITEM ONCE INTO THE DB
@@ -89,7 +106,10 @@ def search_page(pokemon_name):
                 'attack_base_stat' : poke_dict['attack_base_stat'],
                 'photo' : poke_dict['photo'],
                 'abilities' : poke_dict['abilities'],
-                'types' : poke_dict['types']
+                'types' : poke_dict['types'],
+                'back_shiny' : poke_dict['back_shiny'], 
+                'moves' : poke_dict['moves']
+
             } 
             properties = properties
             return render_template('search.html', form = form, len = len(properties['abilities']),properties=properties, main_type = properties['types'][0], pokemon=pokemon)
@@ -115,7 +135,9 @@ def search_page(pokemon_name):
                 'attack_base_stat' : poke_dict['attack_base_stat'],
                 'photo' : poke_dict['photo'],
                 'abilities' : poke_dict['abilities'],
-                'types' : poke_dict['types']
+                'types' : poke_dict['types'],
+                'back_shiny' : poke_dict['back_shiny'], 
+                'moves' : poke_dict['moves']
             } 
             return render_template('search.html', form = form, len = len(properties['abilities']),properties=properties, main_type = properties['types'][0], pokemon=pokemon)
         else:
@@ -126,6 +148,10 @@ def search_page(pokemon_name):
 @app.route('/user/<int:user_id>')
 @login_required # we need to be logged in to view other users
 def user_page(user_id):
+    # update the last_seen since user has interacted with the page
+    current_user.last_seen = func.now()
+    current_user.save_to_db()  
+
     # make sure valid user id
     user = User.query.get(user_id)
 
@@ -178,6 +204,10 @@ def delete_user(user_id):
 @app.route('/user/update/<int:user_id>', methods = ['GET', 'POST'])
 @login_required
 def update_user(user_id):
+    # update the last_seen since user has interacted with the page
+    current_user.last_seen = func.now()
+    current_user.save_to_db()  
+
     # find this user
     user = User.query.get(user_id)
     if user:
@@ -189,7 +219,7 @@ def update_user(user_id):
                     first_name = form.first_name.data
                     last_name = form.last_name.data
                     email = form.email.data
-                    password = form.password.data
+                    password = generate_password_hash(form.password.data)
                     #image_file = images.save(form.profile_pic.data)
                     
                     # if the image was deleted
@@ -240,6 +270,10 @@ def update_user(user_id):
 @app.route('/catch/<string:pokemon_name>/<int:user_id>')
 @login_required
 def catch_pokemon(user_id, pokemon_name):
+    # update the last_seen since user has interacted with the page
+    current_user.last_seen = func.now()
+    current_user.save_to_db()  
+
     # find the user 
     user = User.query.get(user_id)
     # find the pokemon
@@ -302,6 +336,10 @@ def catch_pokemon(user_id, pokemon_name):
 @app.route('/user/remove/<int:user_id>/<string:pokemon_name>')
 @login_required
 def remove_pokemon(user_id, pokemon_name):
+    # update the last_seen since user has interacted with the page
+    current_user.last_seen = func.now()
+    current_user.save_to_db()  
+
     # find the user to be deleted
     user = User.query.get(user_id)
     #find the pokemon to be deleted 
@@ -331,6 +369,10 @@ def remove_pokemon(user_id, pokemon_name):
 @app.route('/users')
 @login_required
 def full_users_page():
+    # update the last_seen since user has interacted with the page
+    current_user.last_seen = func.now()
+    current_user.save_to_db()  
+
     # testing
     friend_requests = current_user.followers.all()
     print(f"These users friend requested me: {friend_requests}")
@@ -338,12 +380,16 @@ def full_users_page():
     print(f"Sent these users friend requests: {sent_friend_requests}")
 
 
-    users = User.query.order_by(desc('date_created')).all() # gives a list of all users
+    users = User.query.order_by(desc('battle_score')).all() # gives a list of all users
     return render_template('full-users.html', users=users)
 
 @app.route('/friend/<int:user_id>')
 @login_required
 def friend_user(user_id):
+    # update the last_seen since user has interacted with the page
+    current_user.last_seen = func.now()
+    current_user.save_to_db()  
+
     user = User.query.get(user_id)
     if user:
         current_user.friend(user)
@@ -355,6 +401,10 @@ def friend_user(user_id):
 @app.route('/unfriend/<int:user_id>')
 @login_required
 def unfriend_user(user_id):
+    # update the last_seen since user has interacted with the page
+    current_user.last_seen = func.now()
+    current_user.save_to_db()  
+
     user = User.query.get(user_id)
     if user:
         current_user.unfriend(user)
@@ -363,14 +413,34 @@ def unfriend_user(user_id):
 @app.route('/deny/<int:user_id>')
 @login_required
 def deny_user(user_id):
+    # update the last_seen since user has interacted with the page
+    current_user.last_seen = func.now()
+    current_user.save_to_db()  
+
     user = User.query.get(user_id)
     if user:
         current_user.deny(user)
     return redirect(url_for('friend_requests_page'))
 
+@app.route('/remove+friend+request/<int:user_id>')
+@login_required
+def remove_friend_req(user_id):
+    # update the last_seen since user has interacted with the page
+    current_user.last_seen = func.now()
+    current_user.save_to_db()  
+
+    user = User.query.get(user_id)
+    if user:
+        current_user.remove_friend_req(user)
+    return redirect(url_for('friend_requests_page'))
+
 @app.route('/friend+requests')
 @login_required
 def friend_requests_page():
+    # update the last_seen since user has interacted with the page
+    current_user.last_seen = func.now()
+    current_user.save_to_db()  
+
     # We should only have things on this page if it's NOT a mutual friendship
 
     # Ash sent Brock a friend request
@@ -382,11 +452,12 @@ def friend_requests_page():
     # Right now sending a friend request will always take us to the friends request page
     # Based on the above methods. Let's find a way to fix that
 
-    friend_requests = current_user.followers.all()
-    print(f"These users friend requested me: {friend_requests}")
-    sent_friend_requests = current_user.followed.all()
-    print(f"Sent these users friend requests: {sent_friend_requests}")
-
+    # friend_requests = current_user.followers.all()
+    # print(f"These users friend requested me: {friend_requests}")
+    # sent_friend_requests = current_user.followed.all()
+    # print(f"Sent these users friend requests: {sent_friend_requests}")
+    friend_requests = [fr for fr in current_user.followers.all() if fr not in current_user.followed.all()]
+    sent_friend_requests = [fr for fr in current_user.followed.all() if fr not in current_user.followers.all()]
     # if user in current_user.followers.all() and user in current_user.followed.all()
         # Message should read "unfriend"
     # elif user in current_user.followers.all() and user not in current_user.followed.all()
@@ -401,6 +472,10 @@ def friend_requests_page():
 @app.route('/friends')
 @login_required
 def friends_page():
+    # update the last_seen since user has interacted with the page
+    current_user.last_seen = func.now()
+    current_user.save_to_db()  
+
     friend_requests = current_user.followers.all()
     print(f"These users friend requested me: {friend_requests}")
     sent_friend_requests = current_user.followed.all()
@@ -409,3 +484,92 @@ def friends_page():
     friends = [fr for fr in friend_requests if fr in sent_friend_requests]
 
     return render_template('friends.html', friends=friends)
+
+@app.route('/ready+to+battle/<int:user_id>')
+@login_required
+def ready_to_battle(user_id):
+    # update the last_seen since user has interacted with the page
+    current_user.last_seen = func.now()
+    current_user.save_to_db()  
+
+    user = User.query.get(user_id)
+    session = PokemonCaughtBy.get_session()
+    query = session.query(Pokemon).join(PokemonCaughtBy).join(User).filter(PokemonCaughtBy.user_id == user.user_id).all()
+    opponent_pokemon_list = [pokemon for pokemon in query]
+
+    query = session.query(Pokemon).join(PokemonCaughtBy).join(User).filter(PokemonCaughtBy.user_id == current_user.user_id).all()
+    my_pokemon_list = [pokemon for pokemon in query]
+
+    return render_template('ready_to_battle.html', user = user, opponent_pokemon_list = opponent_pokemon_list, my_pokemon_list = my_pokemon_list)
+
+@app.route('/battle/<int:user_id>')
+@login_required
+def battle(user_id):
+    # update the last_seen since user has interacted with the page
+    current_user.last_seen = func.now()
+    current_user.save_to_db()  
+
+    user = User.query.get(user_id)
+    session = PokemonCaughtBy.get_session()
+    query = session.query(Pokemon).join(PokemonCaughtBy).join(User).filter(PokemonCaughtBy.user_id == user.user_id).all()
+    opponent_pokemon_list = [pokemon for pokemon in query]
+
+    query = session.query(Pokemon).join(PokemonCaughtBy).join(User).filter(PokemonCaughtBy.user_id == current_user.user_id).all()
+    my_pokemon_list = [pokemon for pokemon in query]
+
+    my_pokemon = my_pokemon_list.copy()
+    opponent_pokemon = opponent_pokemon_list.copy()
+
+    # Go through both users
+    my_moves = []
+    opponent_moves = []
+    round_winners = []
+    while my_pokemon and opponent_pokemon:
+        my_fighter = random.choice(my_pokemon)
+        print(f'my pokemon: {my_fighter}')
+        opponent_fighter = random.choice(opponent_pokemon)
+        print(f'opponent\'s pokemon: {opponent_fighter}')
+        my_move = random.choice(my_fighter.moves)
+        print(f'my move: {my_move}')
+        my_moves.append((my_fighter,my_move))
+        opponent_move = random.choice(opponent_fighter.moves)
+        print(f'opponent\'s move: {opponent_move}')
+        opponent_moves.append((opponent_fighter,opponent_move))
+        #greater than... we are just alphabetically comparing the strings LOL
+        if my_move > opponent_move:
+            print(f'I won that time. Removing {opponent_fighter}')
+            opponent_pokemon.remove(opponent_fighter)
+            round_winners.append(my_fighter)
+        else:
+            my_pokemon.remove(my_fighter)
+            print(f'They won that time. Removing {my_fighter}')
+            round_winners.append(opponent_fighter)
+
+    print(f'My moves were:{my_moves}')
+    print(f'Opponent\'s moves were:{opponent_moves}')
+
+    if my_pokemon: # I won
+        winner = current_user
+        current_user.battle_score += 1
+        current_user.save_to_db()
+        user.battle_score -= 1
+        user.save_to_db()
+    else:
+        winner = user # opponent won
+        user.battle_score += 1
+        user.save_to_db()
+        current_user.battle_score -= 1
+        current_user.save_to_db()
+
+    print(f'My battle score is {current_user.battle_score}')
+    print(f'My opponent\'s battle score is {user.battle_score}')
+
+    print(f'And the winner is.... {winner.first_name}')
+
+    return render_template('battle.html', user = user, 
+                            opponent_pokemon_list = opponent_pokemon_list, 
+                            my_pokemon_list = my_pokemon_list, winner=winner,
+                            my_moves=my_moves, opponent_moves=opponent_moves,
+                            round_winners=round_winners
+                            )
+

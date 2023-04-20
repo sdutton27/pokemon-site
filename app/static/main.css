@@ -46,9 +46,9 @@ body {
     display: grid; 
     grid-auto-columns: 1fr; 
     grid-auto-rows: 1fr; 
-    grid-template-columns: 75% 15% 10%; 
+    grid-template-columns: 60% 30% 10%; 
     grid-template-rows: 1fr; 
-    gap: auto 10px; 
+    gap: auto 20px; 
     grid-template-areas: 
     ".navbar-brand .user-profile-icons .navbar-toggler"; 
     width:100%;
@@ -103,6 +103,16 @@ body {
     min-width: 100px;
     align-self:center;
     justify-self:right;
+    padding-right: 20px;
+}
+
+.notification {
+    color:rgb(252, 59, 64);
+}
+
+.notification:hover {
+    text-decoration: none;
+    color:rgb(125, 30, 33);
 }
 
 .navbar-toggler {
@@ -182,6 +192,8 @@ h6 {
 #update-title {
     font-size: 32px;
     color:#1d1d1d;
+    text-align:center;
+    justify-content:center;
 }
 
 #update-user-form {
@@ -506,7 +518,7 @@ form {
     box-sizing: border-box;
     margin-bottom:22px;
     height: calc(100% - 22px);
-    word-break: break-all;
+    overflow-wrap: break-word;
 }
 
 .card-img-top {
@@ -964,13 +976,156 @@ form {
 
 /* Full Users Page */
 .trainers-group {
-    width: 70%;
+    width: 84%;
 }
 
 .trainers-container {
     display: flex;
-    width: 100%;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    
+    background: rgba(255, 255, 255, 0.8);
+    width:90%;
+    font-family: 'Kanit', sans-serif;
+    text-shadow: 1px 1px 1px #ccc;
+    align-self:center;
+    height:100%;
 }
+
+/*For Friends Page*/
+.friends-title {
+    font-size: 32px;
+    color:#140f46;
+    text-align:center;
+    justify-content:center;
+}
+
+/*For Friends Page*/
+.user-item {
+    text-shadow: none;
+    display: grid; 
+    grid-auto-columns: 1fr; 
+    grid-auto-rows: 1fr; 
+    grid-template-columns: .2fr .4fr 1fr 1fr .8fr .8fr; 
+    grid-template-rows: 1fr .1fr .1fr; 
+    gap: 3px; 
+    grid-template-areas: 
+        "ranking profile-pic user-name user-name battle-btn friend-btn"
+        "created created created . last-seen last-seen"
+    ;
+    align-items: center; 
+}
+
+/*For Friends Page*/
+.ranking {
+    grid-area: ranking;
+}
+
+.list-group-item {
+    padding: 10px;
+    padding-bottom: 0px;
+}
+
+/*For Friends Page*/
+.other-user-name {
+    grid-area: user-name;
+    font-size: 14px;
+    color:#1d1d1d;
+    text-shadow: 1px 1px 1px #cccccc;
+}
+
+.other-user-name:hover {
+    text-decoration: none;
+    color:#969696;
+}
+
+.battle-btn {
+    grid-area:battle-btn;
+    height: 25px;
+    width: 60px;
+    font-size: 9px;
+    padding: 0.3rem 0.5rem;
+    justify-self: flex-end;
+}
+
+.friend-btn {
+    grid-area: friend-btn;
+    height: 25px;
+    width: 60px;
+    font-size: 9px;
+    padding: 0.3rem 0.5rem;
+    justify-self: flex-end;
+
+}
+
+.created-text {
+    grid-area: created;
+    justify-self: flex-start;
+}
+
+.last-seen-text {
+    grid-area: last-seen;
+    justify-self: flex-end;
+}
+
+.friend-req-btn {
+    width: 110px;
+}
+
+/*Battle Page*/
+.trainer-card-container {
+    display:flex;
+    flex-direction: row;
+    gap: 30px;
+}
+
+/* if we were using cards --- note we would switch them around
+.battle-pokemon-container {
+    display:flex;
+    flex-direction: row;
+    gap: 30px;
+}*/
+
+/*note we switch them around*/
+.battle-pokemon-container {
+    display:flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/*
+.users-pokemon-container {
+    height:100%; 
+    padding:0;
+    margin:0;
+    width:100%;
+    height:100%;
+    display: grid;
+    align-items:center;
+
+    justify-content:flex-end; 
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr; 
+
+    grid-template-rows: minmax(auto, 85%); 
+    grid-template-areas: 
+        "poke-card1 poke-card2 poke-card3 poke-card4 poke-card5"; 
+} */
+
+.users-pokemon-container {
+    height:100%; 
+    padding:0;
+    margin:0;
+    width:100%;
+    height:100%;
+    display: grid;
+    align-items:center;
+
+    justify-content:center; 
+    grid-template-columns: auto auto auto auto; 
+
+    grid-template-rows: minmax(auto, 85%); 
+    grid-template-areas: 
+        "poke-card1 poke-card2 poke-card3 poke-card4 poke-card5"; 
+} 
+

@@ -1,27 +1,37 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class='trainers-container'>
+<div class='home-container trainers-container'>
     <h1>List of Trainers</h1>
     {% if current_user.is_authenticated %} <!--Logged in-->
         <ul class="list-group trainers-group">
         {% for u in users %}
+            <div class="list-group-item user-item">
+                <span class="ranking">{{u.battle_score}}</span>
+                {% if u.profile_pic %}
+                    <img class= "profile_img" src="{{u.profile_pic}}" width="30px" height="30px" style="background-color:{{u.color}}">
+                {% else %}
+                    <img class= "profile_img" src="{{ url_for('static', filename='img/user_img/user-no-img.png') }}" width="30px" height="30px" style="background-color:{{u.color}}">
+                {% endif %}
                 {% if u.user_id != current_user.user_id %}
-                    <a class="list-group-item" href="{{url_for('user_page', user_id=u.user_id)}}">{{u.first_name}} {{u.last_name}}</a>
+                <a class="other-user-name" href="{{url_for('user_page', user_id=u.user_id)}}">{{u.first_name}} {{u.last_name}}</a>
                     {% if u in current_user.followers.all() and u in current_user.followed.all() %}
-                    <p class="card-text"><small class="text-body-secondary">You are friends with this user</small></p>
-                        <a class="btn btn-danger" href="{{url_for('unfriend_user', user_id = u.user_id)}}">Unfriend</a>
+                        <p class="card-text"><small class="text-body-secondary">You are friends with this user</small></p>
+                        <a class="btn btn-info battle-btn" href="{{url_for('ready_to_battle', user_id = u.user_id)}}">Battle</a>
+                        <a class="btn btn-danger friend-btn" href="{{url_for('unfriend_user', user_id = u.user_id)}}">Unfriend</a>
                     {% elif u in current_user.followers.all() and u not in current_user.followed.all() %}
-                        <a class="btn btn-primary" href="{{url_for('friend_user', user_id = u.user_id)}}">Accept Friend Request</a>
+                        <a class="btn btn-primary battle-btn friend-req-btn" href="{{url_for('friend_user', user_id = u.user_id)}}">Accept Friend Request</a>
+                        <a class="btn btn-danger friend-btn friend-req-btn" href="{{url_for('deny_user', user_id = u.user_id)}}">Deny Friend Request</a>
                     {% elif u not in current_user.followers.all() and u in current_user.followed.all() %}
-                        <a class="btn btn-danger" href="{{url_for('unfriend_user', user_id = u.user_id)}}">Remove Friend Request</a>
+                        <a class="btn btn-danger friend-btn friend-req-btn" href="{{url_for('remove_friend_req', user_id = u.user_id)}}">Remove Friend Request</a>
                     {% else %}
-                        <a class="btn btn-primary" href="{{url_for('friend_user', user_id = u.user_id)}}">Send Friend Request</a>
+                        <a class="btn btn-primary friend-btn friend-req-btn" href="{{url_for('friend_user', user_id = u.user_id)}}">Send Friend Request</a>
                     {% endif %}
                 {% else %}
-                <li class="list-group-item" style="color:blue;">{{u.first_name}} {{u.last_name}} (you)</li>
+                <a class="other-user-name" href="{{url_for('user_page', user_id=u.user_id)}}">{{u.first_name}} {{u.last_name}} (you)</a>
                 {% endif %}
-                <p class="card-text"><small class="text-body-secondary">Created {{moment(u.date_created).fromNow()}}</small></p>
-                <p class="card-text"><small class="text-body-secondary">Last seen {{moment(u.last_seen).fromNow()}}</small></p>
+                <p class="card-text created-text"><small class="text-body-secondary">Created {{moment(u.date_created).fromNow()}}</small></p>
+                <p class="card-text last-seen-text"><small class="text-body-secondary">Last seen {{moment(u.last_seen).fromNow()}}</small></p>
+            </div>
         {% endfor %}
         </ul>
     {% else %}

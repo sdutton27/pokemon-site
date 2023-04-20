@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if user %}
+<div class="container user-container" style="background-color: {{ user.color }}ef">
+    <div class="container top-user-container">
+        <h2 id="user-homepage-title"> {{user.first_name.upper()}} vs. {{current_user.first_name.upper()}}</h2>
+        <!--Let's nicely format the information about a user here-->
+        <div class = "trainer-card-container">
+            <div class="trainer-card" style="width: 12rem; height: 17rem;">
+                {% if user.profile_pic %}
+                <img class= "profile-pic" src="{{user.profile_pic}}" height="100px">
+                {% else %}
+                <img class= "profile-pic" src="{{ url_for('static', filename='img/user_img/user-no-img.png') }}" width="100px" height="100px">
+                {% endif %}
+                <div class="trainer-card-body">
+                        <div class="trainer-card-item" id="user-name"><b>Name: </b>{{user.first_name}} {{user.last_name}}</div>
+                        <div class="h_line"></div>
+                        {% if user.bio %}
+                        <div class="trainer-card-item bio text-overflow: ellipsis;"><b>Bio: </b>{{user.bio}}</div>
+                        {% else %}
+                        <div class="trainer-card-item bio text-overflow: ellipsis;"><b>Bio: </b>{{user.first_name}} has not added a bio.</div>
+                        {% endif %}    
+                </div>
+            </div>
+            <div class="trainer-card" style="width: 12rem; height: 17rem;">
+                {% if current_user.profile_pic %}
+                <img class= "profile-pic" src="{{current_user.profile_pic}}" height="100px">
+                {% else %}
+                <img class= "profile-pic" src="{{ url_for('static', filename='img/user_img/user-no-img.png') }}" width="100px" height="100px">
+                {% endif %}
+                <div class="trainer-card-body">
+                        <div class="trainer-card-item" id="user-name"><b>Name: </b>{{current_user.first_name}} {{current_user.last_name}}</div>
+                        <div class="h_line"></div>
+                        {% if user.bio %}
+                        <div class="trainer-card-item bio text-overflow: ellipsis;"><b>Bio: </b>{{current_user.bio}}</div>
+                        {% else %}
+                        <div class="trainer-card-item bio text-overflow: ellipsis;"><b>Bio: </b>{{current_user.first_name}} has not added a bio.</div>
+                        {% endif %}    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class = "battle-pokemon-container">
+        <div class="users-pokemon-container">
+            <!--Note how we switch these around-->
+            {% for i in range(my_pokemon_list|length) %}
+            <img class="card-img-top" src="{{my_pokemon_list[i].front_shiny_sprite}}" alt="Card image cap">
+            {% endfor %}
+        </div>
+        <div class="users-pokemon-container">
+            <!--Note how we switch these around-->
+            {% for i in range(opponent_pokemon_list|length) %}
+            <img class="card-img-top" src="{{opponent_pokemon_list[i].back_shiny_sprite}}" alt="Card image cap">
+            {% endfor %}
+        </div>
+        <button type="button" onclick="window.location.href='{{url_for('battle', user_id= user.user_id)}}'" class="btn btn-success lets-battle">Let's Battle!</button>
+    </div>
+    
+</div>
+{% else %}
+<h2>Go battle your friends!</h2>
+{% endif %}
+{% endblock %}

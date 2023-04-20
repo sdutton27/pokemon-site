@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="update-user-container" style="background-color: {{ user.color }}ef">
-  <h1 id="update-title">Update Your Account</h1>
+  <h1 class="update-inner-container" id="update-title">Update Your Account</h1>
   <form method="POST" id="update-user-form" enctype = multipart/form-data>
     {{ form.hidden_tag() }}
 

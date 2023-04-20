@@ -1,24 +1,36 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class='trainers-container'>
-    <h1>List of Friends</h1>
+<div class='home-container trainers-container'>
+    <h1 class="friends-title">My Friends List</h1>
     {% if current_user.is_authenticated %} <!--Logged in-->
+        {% if friends %}
         <ul class="list-group trainers-group">
         {% for f in friends %}
-                {% if (f.user_id != current_user.user_id) and (f not in sent_friend_requests)%}
-                    <a class="list-group-item" href="{{url_for('user_page', user_id=f.user_id)}}">{{f.first_name}} {{f.last_name}}</a>
-                    {% if f in current_user.followed.all() %}
-                        <!--Everything should be this, if-statement below just double checks though-->
-                        <a class="btn btn-danger" href="{{url_for('unfriend_user', user_id = f.user_id)}}">Unfriend</a>
+                <div class="list-group-item user-item">
+                    <span class="ranking">{{f.battle_score}}</span>
+                    {% if f.profile_pic %}
+                        <img class= "profile_img" src="{{f.profile_pic}}" width="30px" height="30px" style="background-color:{{f.color}}">
                     {% else %}
-                        <a class="btn btn-primary" href="{{url_for('friend_user', user_id = f.user_id)}}">Accept Friend Request</a>
-                        <a class="btn btn-danger" href="{{url_for('deny_user', user_id = f.user_id)}}">Deny Friend Request</a>
+                        <img class= "profile_img" src="{{ url_for('static', filename='img/user_img/user-no-img.png') }}" width="30px" height="30px" style="background-color:{{f.color}}">
                     {% endif %}
-                <p class="card-text"><small class="text-body-secondary">Created {{moment(f.date_created).fromNow()}}</small></p>
-                <p class="card-text"><small class="text-body-secondary">Last seen {{moment(f.last_seen).fromNow()}}</small></p>
-                {% endif %}
+                    {% if (f.user_id != current_user.user_id) and (f not in sent_friend_requests)%}
+                        <a class="other-user-name" href="{{url_for('user_page', user_id=f.user_id)}}">{{f.first_name}} {{f.last_name}}</a>
+                        {% if f in current_user.followed.all() %}
+                            <!--Everything should be this, if-statement below just double checks though-->
+                            <a class="btn btn-info battle-btn" href="{{url_for('ready_to_battle', user_id= f.user_id)}}">Battle</a>
+                            <a class="btn btn-danger friend-btn" href="{{url_for('unfriend_user', user_id = f.user_id)}}">Unfriend</a>
+                        {% else %}
+                            <a class="btn btn-primary friend-btn friend-req-btn" href="{{url_for('friend_user', user_id = f.user_id)}}">Send Friend Request</a>
+                        {% endif %}
+                    <p class="card-text created-text"><small class="text-body-secondary">Created {{moment(f.date_created).fromNow()}}</small></p>
+                    <p class="card-text last-seen-text"><small class="text-body-secondary">Last seen {{moment(f.last_seen).fromNow()}}</small></p>
+                    {% endif %}
+                </div>
         {% endfor %}
         </ul>
+        {% else %}
+            <h6>You do not have any friends yet.</h6>
+        {% endif %}
     {% else %}
         <h2>Log in to see your friends</h2>
     {% endif %}

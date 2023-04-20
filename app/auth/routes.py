@@ -8,6 +8,7 @@ from ..models import User
 from flask_login import login_user, logout_user, login_required
 from email_validator import validate_email
 from flask import Blueprint, flash, get_flashed_messages
+from werkzeug.security import check_password_hash
 
 from sqlalchemy.sql import func # for last_seen
 
@@ -95,7 +96,7 @@ def login_page():
         if user: # user was found
                 # verify password
                 # looks at the password in the database = the password you sent in the form
-            if user.password == password:
+            if check_password_hash(user.password, password):
                     # log in
                 login_user(user) #login the user
                     # take the user back to the homepage
