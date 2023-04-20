@@ -33,7 +33,7 @@ packaging==23.0
 pickleshare==0.7.5
 psycopg2-binary==2.9.6
 python-dateutil==2.8.2
-python-dotenv==1.0.0 # comment this out for uploading to render
+python-dotenv # comment this out for uploading to render
 requests==2.28.2
 six==1.16.0
 SQLAlchemy==2.0.9
