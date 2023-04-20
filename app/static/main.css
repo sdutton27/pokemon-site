@@ -23,14 +23,6 @@ body {
     text-shadow: .2px .2px .2px #000000;
 }
 
-.navbar-battle {
-
-}
-
-.navbar-catch { 
-    color:rgb(255, 204, 0);
-}
-
 .alert{
     width:100%;
     margin-bottom:0;

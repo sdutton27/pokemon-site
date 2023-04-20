@@ -23,7 +23,8 @@ images = UploadSet('images', IMAGES)
 configure_uploads(app, images)
 
 # global variables for opponent
-opponent_names = ['Jim', 'Nate', 'Abigail', 'Jordan', 'Stephen', 'Derek', 'Leora', 'Chrissy']
+# put this in reverse order since indices will be backwards
+opponent_names = ['Chrissy', 'Leora', 'Derek', 'Stephen', 'Jordan', 'Abigail', 'Nate', 'Jim' ]
 #url_for('static', filename=f'img/random_opponent_img/trainer_{i+1}.png')
 profile_pics = [f'img/random_opponent_img/trainer_{i+1}.png' for i in range(8)]
 
