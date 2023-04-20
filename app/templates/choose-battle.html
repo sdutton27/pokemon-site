@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container home-container user-container">
+    <div class="container top-user-container" style="padding-top: 60px;">
+        <h2 id="user-homepage-title">Who would you like to battle?</h2>
+        <!--Let's nicely format the information about a user here-->
+        <div class = "trainer-card-container" style="padding-top: 10px">
+            <button type="button" onclick="window.location.href='{{url_for('friends_page')}}'" class="btn btn-info lets-battle" >Battle a Friend</button>
+            <button type="button" onclick="window.location.href='{{url_for('ready_to_battle', user_id= range(-8,-1)|random ) }}'" class="btn btn-warning lets-battle" >Random Battle</button>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

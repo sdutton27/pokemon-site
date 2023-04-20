@@ -13,7 +13,12 @@
                     <img class= "profile_img" src="{{ url_for('static', filename='img/user_img/user-no-img.png') }}" width="30px" height="30px" style="background-color:{{u.color}}">
                 {% endif %}
                 {% if u.user_id != current_user.user_id %}
-                <a class="other-user-name" href="{{url_for('user_page', user_id=u.user_id)}}">{{u.first_name}} {{u.last_name}}</a>
+                    <div class="other-user-name-container">
+                        {%if u in leaders %}
+                        <img src="{{ url_for('static', filename='img/crown.png') }}" style="margin-right: 5px;" width="15px" height="15px">
+                        {% endif %}
+                        <a class="other-user-name" href="{{url_for('user_page', user_id=u.user_id)}}">{{u.first_name}} {{u.last_name}}</a>
+                    </div>
                     {% if u in current_user.followers.all() and u in current_user.followed.all() %}
                         <p class="card-text"><small class="text-body-secondary">You are friends with this user</small></p>
                         <a class="btn btn-info battle-btn" href="{{url_for('ready_to_battle', user_id = u.user_id)}}">Battle</a>
@@ -27,7 +32,12 @@
                         <a class="btn btn-primary friend-btn friend-req-btn" href="{{url_for('friend_user', user_id = u.user_id)}}">Send Friend Request</a>
                     {% endif %}
                 {% else %}
-                <a class="other-user-name" href="{{url_for('user_page', user_id=u.user_id)}}">{{u.first_name}} {{u.last_name}} (you)</a>
+                <div class="other-user-name-container">
+                    {%if u in leaders %}
+                    <img src="{{ url_for('static', filename='img/crown.png') }}" style="margin-right: 5px;" width="15px" height="15px">
+                    {% endif %}
+                    <a class="other-user-name" href="{{url_for('user_page', user_id=u.user_id)}}">{{u.first_name}} {{u.last_name}} (you)</a>
+                </div>
                 {% endif %}
                 <p class="card-text created-text"><small class="text-body-secondary">Created {{moment(u.date_created).fromNow()}}</small></p>
                 <p class="card-text last-seen-text"><small class="text-body-secondary">Last seen {{moment(u.last_seen).fromNow()}}</small></p>

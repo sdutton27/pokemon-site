@@ -4,7 +4,7 @@
 {% if user %}
 <div class="container user-container" style="background-color: {{ user.color }}ef">
     <div class="container top-user-container">
-        <h2 id="user-homepage-title"> {{user.first_name.upper()}} vs. {{current_user.first_name.upper()}}</h2>
+        <h2 id="user-homepage-title">TRAINER BATTLE: {{user.first_name.upper()}} vs. {{current_user.first_name.upper()}}</h2>
         <!--Let's nicely format the information about a user here-->
         <div class = "trainer-card-container">
             <div class="trainer-card" style="width: 12rem; height: 17rem;">
@@ -54,7 +54,7 @@
             <img class="card-img-top" src="{{opponent_pokemon_list[i].back_shiny_sprite}}" alt="Card image cap">
             {% endfor %}
         </div>
-        <button type="button" onclick="window.location.href='{{url_for('battle', user_id= user.user_id)}}'" class="btn btn-success lets-battle">Let's Battle!</button>
+        <button type="button" onclick="window.location.href='{{url_for('battle', user_id= user.user_id)}}'" class="btn btn-success lets-battle" >Let's Battle!</button>
     </div>
     
 </div>

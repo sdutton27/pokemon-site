@@ -23,6 +23,14 @@ body {
     text-shadow: .2px .2px .2px #000000;
 }
 
+.navbar-battle {
+
+}
+
+.navbar-catch { 
+    color:rgb(255, 204, 0);
+}
+
 .alert{
     width:100%;
     margin-bottom:0;
@@ -303,10 +311,10 @@ form {
 }
 
 .user-pg-card-text {
-    font-size: .6vw;
+    font-size: min(.6vw, 5.2px);;
     padding:0;
     margin:0;
-    height:1vw;
+    height:min(1vw, 8.6px);
 }
 
 .card {
@@ -329,7 +337,9 @@ form {
     grid-template-areas: 
         ".card-title-top"
         ".card-img-top"
-        ".card-body"; 
+        ".card-body";
+        
+    text-shadow: none;
 }
 
 .steel-card { 
@@ -528,7 +538,6 @@ form {
     /*-webkit-transform:scale(.6); /* Safari and Chrome */
     /*-o-transform:scale(.6); /* Opera */
     width:60%;
-    height:60%h;
     padding:0;
     margin:0;
     align-self:center;
@@ -573,6 +582,14 @@ form {
     margin-left:14px;
 }
 
+.user-card-title-steel {
+    margin-top:6%;
+    margin-left:15%;
+    font-size:min(1vw, 8.7px);
+    position:relative;
+    color:rgb(0, 0, 0);
+}
+
 .card-title-basic {
     margin-left:14px;
 }
@@ -580,13 +597,23 @@ form {
 .user-card-title-basic {
     margin-top:6%;
     margin-left:15%;
-    font-size:1vw;
+    font-size:min(1vw, 8.7px);
     position:relative;
     color:rgb(0, 0, 0);
 }
 
 .card-title-fire {
     margin-left:45px;
+    font-size: 15px;
+    margin-top:10px;
+}
+
+.user-card-title-fire {
+    margin-top:6%;
+    margin-left:24%;
+    font-size:min(1vw, 8.7px);
+    position:relative;
+    color:rgb(0, 0, 0);
 }
 
 .card-title-electric {
@@ -596,7 +623,7 @@ form {
 
 .user-card-title-electric {
     margin-left:28%;
-    font-size:1vw;
+    font-size:min(1vw, 8.7px);
     position:relative;
     color:rgb(0, 0, 0);
 }
@@ -608,7 +635,8 @@ form {
 
 .user-card-title-rock {
     margin-left:28%;
-    font-size: 40%;
+    font-size:min(1vw, 8.7px);
+    position:relative;
     color:rgb(0, 0, 0);
 }
 
@@ -620,7 +648,7 @@ form {
 .user-card-title-grass {
     margin-top:5%;
     margin-left:25%;
-    font-size:1vw;
+    font-size:min(1vw, 8.7px);
     position:relative;
     color:rgb(0, 0, 0);
 }
@@ -632,7 +660,7 @@ form {
 
 .user-card-title-water {
     margin-left:28%;
-    font-size:1vw;
+    font-size:min(1vw, 8.7px);
     position:relative;
     color:rgb(0, 0, 0);
 }
@@ -642,8 +670,24 @@ form {
     font-size: 13px;
 }
 
+.user-card-title-psychic {
+    margin-left:28%;
+    font-size:min(1vw, 8.7px);
+    position:relative;
+    color:rgb(0, 0, 0);
+}
+
+
 .card-title-ice {
-    margin-left:45px;
+    margin-left:50px;
+    font-size: 13px;
+}
+
+.user-card-title-ice {
+    margin-left:28%;
+    font-size:min(1vw, 8.7px);
+    position:relative;
+    color:rgb(0, 0, 0);
 }
 
 .card-title-dragon {
@@ -651,14 +695,35 @@ form {
     font-size: 13px;
 }
 
+.user-card-title-dragon {
+    margin-left:28%;
+    font-size:min(1vw, 8.7px);
+    position:relative;
+    color:rgb(246, 246, 246);
+}
+
 .card-title-fighting {
     margin-left:50px;
     font-size: 13px;
 }
 
+.user-card-title-fighting {
+    margin-left:28%;
+    font-size:min(1vw, 8.7px);
+    position:relative;
+    color:rgb(0, 0, 0);
+}
+
 .card-title-dark {
     margin-left:50px;
     font-size: 13px;
+    color:rgb(246, 246, 246);
+}
+
+.user-card-title-dark {
+    margin-left:28%;
+    font-size:min(1vw, 8.7px);
+    position:relative;
     color:rgb(246, 246, 246);
 }
 
@@ -669,7 +734,7 @@ form {
 
 .user-card-title-fairy {
     margin-left:28%;
-    font-size:1vw;
+    font-size:min(1vw, 8.7px);
     position:relative;
     color:rgb(0, 0, 0);
 }
@@ -1015,6 +1080,8 @@ form {
         "created created created . last-seen last-seen"
     ;
     align-items: center; 
+    padding:10px;
+    padding-bottom: 0px;
 }
 
 /*For Friends Page*/
@@ -1022,14 +1089,21 @@ form {
     grid-area: ranking;
 }
 
-.list-group-item {
+/*.list-group-item {
     padding: 10px;
     padding-bottom: 0px;
+}*/
+.other-user-name-container {
+    grid-area: user-name;
+    grid-column: 3 / span 2;
+    display: flex;
+    flex-direction: row;
+    align-items:center;
 }
 
 /*For Friends Page*/
 .other-user-name {
-    grid-area: user-name;
+    grid-column: 3 / span 2;
     font-size: 14px;
     color:#1d1d1d;
     text-shadow: 1px 1px 1px #cccccc;
@@ -1129,3 +1203,16 @@ form {
         "poke-card1 poke-card2 poke-card3 poke-card4 poke-card5"; 
 } 
 
+.battle-lower-container {
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    align-items: center;
+}
+
+.battle-text {
+    width: 85%;
+    text-align: center;
+    border: 1px solid;
+    border-radius: 2px 2px 2px 2px;
+}

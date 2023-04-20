@@ -14,7 +14,12 @@
                 {% else %}
                     <img class= "profile_img" src="{{ url_for('static', filename='img/user_img/user-no-img.png') }}" width="30px" height="30px" style="background-color:{{f.color}}">
                 {% endif %}
-                <a class="other-user-name" href="{{url_for('user_page', user_id=f.user_id)}}">{{f.first_name}} {{f.last_name}}</a>
+                <div class="other-user-name-container">
+                    {%if f in leaders %}
+                    <img src="{{ url_for('static', filename='img/crown.png') }}" style="margin-right: 5px;" width="15px" height="15px">
+                    {% endif %}
+                    <a class="other-user-name" href="{{url_for('user_page', user_id=f.user_id)}}">{{f.first_name}} {{f.last_name}}</a>
+                </div>
                 {% if (f.user_id != current_user.user_id) and (f not in sent_friend_requests)%}
                     {% if f in current_user.followed.all() %}
                         <a class="btn btn-info battle-btn" href="{{url_for('ready_to_battle', user_id = f.user_id)}}">Battle</a>
@@ -48,7 +53,12 @@
                 {% else %}
                     <img class= "profile_img" src="{{ url_for('static', filename='img/user_img/user-no-img.png') }}" width="30px" height="30px" style="background-color:{{f.color}}">
                 {% endif %}
-                <a class="other-user-name" href="{{url_for('user_page', user_id=f.user_id)}}">{{f.first_name}} {{f.last_name}}</a>
+                <div class="other-user-name-container">
+                    {%if f in leaders %}
+                    <img src="{{ url_for('static', filename='img/crown.png') }}" style="margin-right: 5px;" width="15px" height="15px">
+                    {% endif %}
+                    <a class="other-user-name" href="{{url_for('user_page', user_id=f.user_id)}}">{{f.first_name}} {{f.last_name}}</a>
+                </div>
                 {% if (f.user_id != current_user.user_id) and (f not in friend_requests)%}
                     {% if f in current_user.followed.all() %}
                         <!--Everything should be this let's just double check though-->

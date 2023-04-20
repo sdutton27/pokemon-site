@@ -29,7 +29,11 @@
 
     <div class="update-inner-container" style="justify-content:flex-start;">
     <h6>Current profile picture:</h6>
+    {% if user.profile_pic %}
     <img class= "profile-pic" id="edit-prof-pic" src="{{user.profile_pic}}" height="100px">
+    {% else %}
+    <img class= "profile-pic" id="edit-prof-pic" height="100px">
+    {% endif %}
     </div>
     <h6>Upload new file: <br><small>(by default, we will keep your existing profile picture)</small></h6>
     {{form.profile_pic(class='form-control', placeholder='Profile Pic', value=user.profile_pic)}}

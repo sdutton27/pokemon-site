@@ -2,9 +2,9 @@
 
 {% block content %}
 {% if user %}
-<div class="container user-container" style="background-color: {{ user.color }}ef">
+<div class="container user-container" style="background-color: {{ winner.color }}ef">
     <div class="container top-user-container">
-        <h2 id="user-homepage-title">{{winner.first_name.upper()}} IS THE WINNER!</h2>
+        <h2 id="user-homepage-title">And the winner is... {{winner.first_name.upper()}}!</h2>
         <!--Let's nicely format the information about a user here-->
         <div class = "trainer-card-container">
             {% if winner == user %}
@@ -34,10 +34,10 @@
                 <div class="trainer-card-body">
                         <div class="trainer-card-item" id="user-name"><b>Name: </b>{{current_user.first_name}} {{current_user.last_name}}</div>
                         <div class="h_line"></div>
-                        {% if user.bio %}
-                        <div class="trainer-card-item bio text-overflow: ellipsis;"><b>Bio: </b>{{current_user.bio}}</div>
+                        {% if current_user.bio %}
+                            <div class="trainer-card-item bio text-overflow: ellipsis;"><b>Bio: </b>{{current_user.bio}}</div>
                         {% else %}
-                        <div class="trainer-card-item bio text-overflow: ellipsis;"><b>Bio: </b>{{current_user.first_name}} has not added a bio.</div>
+                            <div class="trainer-card-item bio text-overflow: ellipsis;"><b>Bio: </b>{{current_user.first_name}} has not added a bio.</div>
                         {% endif %}    
                 </div>
             </div>
@@ -60,17 +60,26 @@
             {% endfor %}
         </div>
         {% endif %}
-        <div class="battle-text overflow-auto">
+        <div class="battle-text" style="height:70px; overflow:auto;">
+            <p style="margin-top:20px;">Battle Log (scroll to read):<p>
+            <hr>
             {% for i in range(my_moves|length)%}
             <p>Round {{i+1}}: {{user.first_name}}'s {{opponent_moves[i][0].pokemon_name}} vs. {{current_user.first_name}}'s {{my_moves[i][0].pokemon_name}}</p>
             {% if my_moves[i][0] == round_winners[i] %} <!--If I won the round-->
                 <p>{{my_moves[i][0].pokemon_name}}'s "{{my_moves[i][1]}}" beat {{opponent_moves[i][0].pokemon_name}}'s "{{opponent_moves[i][1]}}." {{opponent_moves[i][0].pokemon_name}} was eliminated from the battle.</p>
+                {% if i < my_moves|length - 1%}
+                    <p>{{user.first_name}} returned {{opponent_moves[i][0].pokemon_name}} to its pokeball and sent out {{opponent_moves[i+1][0].pokemon_name}}.</p>
+                {% endif %}
             {% else %}
                 <p>{{opponent_moves[i][0].pokemon_name}}'s "{{opponent_moves[i][1]}}" beat {{my_moves[i][0].pokemon_name}}'s "{{my_moves[i][1]}}." {{my_moves[i][0].pokemon_name}} was eliminated from the battle.</p>
+                {% if i < my_moves|length - 1%}
+                    <p>{{current_user.first_name}} returned {{my_moves[i][0].pokemon_name}} to its pokeball and sent out {{my_moves[i+1][0].pokemon_name}}.</p>
+                {% endif %}
             {% endif %}
+            <hr>
             {% endfor %}
             {% if winner == user %} <!--If the opponent won-->
-                <p>{{current_user.first_name}} ran out of pokemon. Better luck next time.</p>
+                <p>{{current_user.first_name}} ran out of Pokemon. Better luck next time.</p>
                 <p>Congratulations {{user.first_name}} on winning the match!</p>
             {% else %} <!--If the current user won-->
                 <p>{{user.first_name}} ran out of Pokemon. Better luck next time.</p>

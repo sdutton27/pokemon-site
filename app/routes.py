@@ -22,10 +22,15 @@ import requests # to handle the PokeAPI
 images = UploadSet('images', IMAGES)
 configure_uploads(app, images)
 
+# global variables for opponent
+opponent_names = ['Jim', 'Nate', 'Abigail', 'Jordan', 'Stephen', 'Derek', 'Leora', 'Chrissy']
+#url_for('static', filename=f'img/random_opponent_img/trainer_{i+1}.png')
+profile_pics = [f'img/random_opponent_img/trainer_{i+1}.png' for i in range(8)]
+
 def find_poke(pokemon_name):
     url = f'https://pokeapi.co/api/v2/pokemon/{pokemon_name}/'
 
-    print(url)
+    #print(url)
 
     response = requests.get(url)
     if not response.ok:
@@ -37,7 +42,7 @@ def find_poke(pokemon_name):
     id = data['id']
     type_url = f'https://pokeapi.co/api/v2/pokemon-form/{id}/'
     
-    print(type_url)
+    #print(type_url)
     type_response = requests.get(type_url)
     type_data = type_response.json()
 
@@ -56,8 +61,31 @@ def find_poke(pokemon_name):
         #"moves" : [data['moves']['move']['name'] for i in range(5)],
         "moves" : [move['move']['name'] for move in data['moves']], # lc to get all abilities
     }
-    print(f"Type is: {poke_dict['types']}")
+    #print(f"Type is: {poke_dict['types']}")
     return poke_dict
+
+class Opponent():
+
+    def __init__(self, index):
+        self.user_id = -1-index
+        self.first_name = opponent_names[index]
+        self.profile_pic = profile_pics[index]
+        self.color = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+        self.bio = ''
+        pokemon_list = []
+        # randomize how many pokemon - num from 1-5
+        for i in range(random.randint(1,5)):
+            # randomize which pokemon id - num from 1-247
+            random_pokemon_idx = random.randint(1, 247)
+
+            poke_dict = find_poke(random_pokemon_idx)
+            pokemon_list.append(Pokemon(poke_dict['name'], poke_dict['hp_base_stat'], poke_dict['defense_base_stat'], poke_dict['attack_base_stat'], poke_dict['photo'], poke_dict['abilities'], poke_dict['types'], poke_dict['back_shiny'], poke_dict['moves']))
+        self.pokemon = pokemon_list
+
+opponents_dict = {} # this gets changed in random battle
+for i in range(8):
+        opponents_dict[int(-1-i)] = Opponent(i)
+
 
 @app.route('/', methods=["GET"])
 def home_page():
@@ -305,7 +333,13 @@ def catch_pokemon(user_id, pokemon_name):
                 #flash(pokemon_caught_list, 'success')
 
                 if num_caught_pokemon < 5:
-                
+                    
+                    query = session.query(Pokemon).join(PokemonCaughtBy).join(User).filter(PokemonCaughtBy.user_id == user.user_id).all()
+                    if pokemon in query:
+                        flash('You cannot have two of the same type of Pokemon on your team.','danger')
+                        return redirect(url_for('search_page'))
+
+
                     #pokemon_caught_by = PokemonCaughtBy(user.user_id, pokemon.pokemon_name)
                     pokemon_caught_by = PokemonCaughtBy(user.user_id, pokemon_name)
                     pokemon_caught_by.save_to_db() 
@@ -379,9 +413,12 @@ def full_users_page():
     sent_friend_requests = current_user.followed.all()
     print(f"Sent these users friend requests: {sent_friend_requests}")
 
+    # get the leader
+    leader = User.query.order_by(desc('battle_score')).first()
+    leaders = [user for user in User.query.order_by(desc('battle_score')).all() if user.battle_score == leader.battle_score ]
 
     users = User.query.order_by(desc('battle_score')).all() # gives a list of all users
-    return render_template('full-users.html', users=users)
+    return render_template('full-users.html', users=users, leaders=leaders)
 
 @app.route('/friend/<int:user_id>')
 @login_required
@@ -466,8 +503,10 @@ def friend_requests_page():
         # Message should read "remove friend request"
     # else 
         # Message should read "Friend" (Blue)
-
-    return render_template('friend-requests.html', friend_requests=friend_requests, sent_friend_requests=sent_friend_requests)
+    # get the leader
+    leader = User.query.order_by(desc('battle_score')).first()
+    leaders = [user for user in User.query.order_by(desc('battle_score')).all() if user.battle_score == leader.battle_score ]
+    return render_template('friend-requests.html', friend_requests=friend_requests, sent_friend_requests=sent_friend_requests, leaders=leaders)
 
 @app.route('/friends')
 @login_required
@@ -483,42 +522,72 @@ def friends_page():
 
     friends = [fr for fr in friend_requests if fr in sent_friend_requests]
 
-    return render_template('friends.html', friends=friends)
+        # get the leader
+    leader = User.query.order_by(desc('battle_score')).first()
+    leaders = [user for user in User.query.order_by(desc('battle_score')).all() if user.battle_score == leader.battle_score ]
+    
+    return render_template('friends.html', friends=friends, leaders=leaders)
 
-@app.route('/ready+to+battle/<int:user_id>')
+@app.route('/choose+battle')
+@login_required
+def choose_battle():
+    return render_template('choose-battle.html')
+
+@app.route('/ready+to+battle/<user_id>')
 @login_required
 def ready_to_battle(user_id):
+    # MAYBE we do this if user_id > 0, and if it's < 0, it's an Opponent
+
     # update the last_seen since user has interacted with the page
     current_user.last_seen = func.now()
     current_user.save_to_db()  
 
-    user = User.query.get(user_id)
     session = PokemonCaughtBy.get_session()
-    query = session.query(Pokemon).join(PokemonCaughtBy).join(User).filter(PokemonCaughtBy.user_id == user.user_id).all()
-    opponent_pokemon_list = [pokemon for pokemon in query]
+
+    if int(user_id) > 0:
+        user = User.query.get(user_id)
+        query = session.query(Pokemon).join(PokemonCaughtBy).join(User).filter(PokemonCaughtBy.user_id == user.user_id).all()
+        opponent_pokemon_list = [pokemon for pokemon in query]
+    else:
+        user = opponents_dict[int(user_id)]
+        user.profile_pic = url_for('static', filename=profile_pics[int(user_id)])
+        opponent_pokemon_list = user.pokemon
 
     query = session.query(Pokemon).join(PokemonCaughtBy).join(User).filter(PokemonCaughtBy.user_id == current_user.user_id).all()
     my_pokemon_list = [pokemon for pokemon in query]
 
+    if len(my_pokemon_list) == 0:
+        flash('You must have at least one pokemon in order to battle','danger')
+        return redirect(url_for('search_page'))
+    elif len(opponent_pokemon_list) == 0:
+        flash('Your opponent must have at least one pokemon in order to battle.','danger')
+        return redirect(url_for('choose_battle'))
+
     return render_template('ready_to_battle.html', user = user, opponent_pokemon_list = opponent_pokemon_list, my_pokemon_list = my_pokemon_list)
 
-@app.route('/battle/<int:user_id>')
+@app.route('/battle/<user_id>')
 @login_required
 def battle(user_id):
     # update the last_seen since user has interacted with the page
     current_user.last_seen = func.now()
     current_user.save_to_db()  
 
+    # maybe we do this if the ID is greater than 0
     user = User.query.get(user_id)
     session = PokemonCaughtBy.get_session()
-    query = session.query(Pokemon).join(PokemonCaughtBy).join(User).filter(PokemonCaughtBy.user_id == user.user_id).all()
-    opponent_pokemon_list = [pokemon for pokemon in query]
-
     query = session.query(Pokemon).join(PokemonCaughtBy).join(User).filter(PokemonCaughtBy.user_id == current_user.user_id).all()
     my_pokemon_list = [pokemon for pokemon in query]
-
     my_pokemon = my_pokemon_list.copy()
-    opponent_pokemon = opponent_pokemon_list.copy()
+    if int(user_id) > 0:
+        query = session.query(Pokemon).join(PokemonCaughtBy).join(User).filter(PokemonCaughtBy.user_id == user.user_id).all()
+        opponent_pokemon_list = [pokemon for pokemon in query]    
+        opponent_pokemon = opponent_pokemon_list.copy()
+    else:
+        user = opponents_dict[int(user_id)]
+        user.profile_pic = url_for('static', filename=profile_pics[int(user_id)])
+        print(f"Opponent is this opponent: {user.first_name}")
+        opponent_pokemon_list = user.pokemon
+        opponent_pokemon = opponent_pokemon_list.copy()
 
     # Go through both users
     my_moves = []
@@ -552,17 +621,23 @@ def battle(user_id):
         winner = current_user
         current_user.battle_score += 1
         current_user.save_to_db()
-        user.battle_score -= 1
-        user.save_to_db()
+        try: # if user is a real user
+            user.battle_score -= 1
+            user.save_to_db()
+        except:
+            pass
     else:
         winner = user # opponent won
-        user.battle_score += 1
-        user.save_to_db()
+        try: # if user is a real user
+            user.battle_score += 1
+            user.save_to_db()
+        except:
+            pass
         current_user.battle_score -= 1
         current_user.save_to_db()
 
-    print(f'My battle score is {current_user.battle_score}')
-    print(f'My opponent\'s battle score is {user.battle_score}')
+    #print(f'My battle score is {current_user.battle_score}')
+    #print(f'My opponent\'s battle score is {user.battle_score}')
 
     print(f'And the winner is.... {winner.first_name}')
 
@@ -573,3 +648,18 @@ def battle(user_id):
                             round_winners=round_winners
                             )
 
+@app.route('/random+battle')
+@login_required
+def random_battle():
+
+    random_idx = random.randint(-8, -1)
+    opponent = opponents_dict[random_idx]
+    opponent.profile_pic = url_for('static', filename=profile_pics[random_idx])
+
+    print(f"Opponent Name: {opponent.first_name}")
+    print(f"Opponent ID: {int(opponent.user_id)}")
+    print(f'TYPE OF OPPONENT ID: {opponent.user_id}')
+    print(f"Profile pic: {opponent.profile_pic}")
+    print(f"Color: {opponent.color}")
+    print(f"First Pokemon: {opponent.pokemon[0].pokemon_name}")
+    return redirect(url_for('battle', user_id=int(opponent.user_id)))
